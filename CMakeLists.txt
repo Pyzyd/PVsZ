@@ -11,6 +11,10 @@ set(TARGET ${PROJECT_NAME})
 set(SOURCES 
     src/main.cpp
     src/game.cpp
+    src/object.cpp
+    src/scene.cpp
+    src/plant.cpp
+    src/scene_main.cpp
 )
 
 add_executable(${TARGET} ${SOURCES})
@@ -35,6 +39,14 @@ target_link_libraries(${TARGET} PRIVATE
     $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>
     $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
     glm::glm
+)
+
+# 复制资源文件夹 - 使用正确的目标名称 ${TARGET}
+add_custom_command(TARGET ${TARGET} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/res
+    $<TARGET_FILE_DIR:${TARGET}>/res
+    COMMENT "Copying resource files..."
 )
 
 # 在 Windows 上复制 DLL
