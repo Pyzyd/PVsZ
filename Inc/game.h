@@ -13,6 +13,7 @@ class Scene; // 前向声明
 class Game
 {
     glm::vec2 screen_size_ = glm::vec2(0.0f);
+    glm::vec2 mouse_pos_ = glm::vec2(0.0f);
 
     Scene* current_scene_ = nullptr; // 当前场景
 
@@ -41,6 +42,8 @@ public:
     // getters and setters
     glm::vec2 getScreenSize() const { return screen_size_; } // 获取屏幕大小
     SDL_Renderer* getRenderer() const { return renderer_; } // 获取渲染器
+    glm::vec2 getMousePos() const { return mouse_pos_; } // 获取鼠标位置
+    void setMousePos(glm::vec2 pos) { mouse_pos_ = pos; } // 设置鼠标位置
 
     // 工具函数
     void renderBackground(SDL_Texture* texture);

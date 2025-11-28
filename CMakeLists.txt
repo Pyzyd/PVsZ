@@ -18,7 +18,9 @@ set(SOURCES
 )
 
 add_executable(${TARGET} ${SOURCES})
-
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
 # 修正包名（使用正确的大小写）
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)

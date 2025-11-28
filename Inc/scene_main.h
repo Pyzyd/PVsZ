@@ -10,12 +10,18 @@
 #define TOP_BAR_CARD_START_X (338 - WINDOW_START_X)
 #define TOP_BAR_CARD_START_Y (6.0 - WINDOW_START_Y)
 #define TOP_BAR_CARD_INTERVAL  62.5f
+#define TOP_BAR_CARD_HEIGHT 96.0f
 
+class Plant;
 
 class SceneMain : public Scene
 {
 private:
     SDL_Texture* top_bar_;
+    bool card_clicked_ = false;
+    int card_num_ = 0;
+    Plant* clicked_card_plant_ = nullptr;
+    glm::vec2 mouse_position_ = glm::vec2(0, 0);
 public:
     SceneMain() = default;
     virtual ~SceneMain() = default;
@@ -27,6 +33,9 @@ public:
     virtual void clean() override;
 
     void renderTopBar();
+
+    void userClickedCard(SDL_Event &event);
+    void setClickedCardPlant(int index);
 };
 
 
