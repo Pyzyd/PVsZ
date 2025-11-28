@@ -80,53 +80,59 @@ void SceneMain::renderTopBar()
 
 void SceneMain::userClickedCard(SDL_Event &event)
 {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    game_.setMousePos(glm::vec2(x, y));
+    int x, y;  // 用于存储鼠标的x和y坐标
+    SDL_GetMouseState(&x, &y);  // 获取当前鼠标状态
+    game_.setMousePos(glm::vec2(x, y));  // 设置鼠标位置为游戏中的鼠标位置
     if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
     {
+        // 检查鼠标点击位置是否在卡牌区域内
         if (event.button.x > TOP_BAR_CARD_START_X && event.button.x < TOP_BAR_CARD_START_X + TOP_BAR_CARD_INTERVAL * card_num_ &&
             event.button.y > TOP_BAR_CARD_START_Y && event.button.y < TOP_BAR_CARD_START_Y + TOP_BAR_CARD_HEIGHT)
         {
-            int index = (event.button.x - TOP_BAR_CARD_START_X) / TOP_BAR_CARD_INTERVAL;
-            // SDL_Log("%d", index);
-            card_clicked_ = true;
-            setClickedCardPlant(index);
+            int index = (event.button.x - TOP_BAR_CARD_START_X) / TOP_BAR_CARD_INTERVAL;  // 计算点击的卡牌索引
+            // SDL_Log("%d", index);  // 调试输出卡牌索引
+            card_clicked_ = true;  // 设置卡牌被点击标志为true
+            setClickedCardPlant(index);  // 设置被点击的卡牌对应的植物
         }
     }
+    // 处理鼠标移动事件，且卡牌已被点击
     else if (event.type == SDL_MOUSEMOTION && card_clicked_ == true)
     {
-        if (clicked_card_plant_ != nullptr)
+        if (clicked_card_plant_ != nullptr)  // 如果存在被点击的植物
         {
-            clicked_card_plant_->setPos(game_.getMousePos());
+            clicked_card_plant_->setPos(game_.getMousePos());  
         }
     }
+    // 处理鼠标左键释放事件，且卡牌已被点击
     else if (event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT && card_clicked_ == true)
     {
-        card_clicked_ = false;
-        if (!clicked_card_plant_) {
+        card_clicked_ = false;  // 重置卡牌点击标志
+        if (!clicked_card_plant_) {  // 如果没有被点击的植物，直接返回
             return;
         }
+        // 检查鼠标位置是否在植物种植区域内
         if (x > PLANT_MAP_START_X && x < PLANT_MAP_START_X + PLANT_MAP_WIDTH &&
             y > PLANT_MAP_START_Y && y < PLANT_MAP_START_Y + PLANT_MAP_HEIGHT)
         {
-            int row = (y - PLANT_MAP_START_Y) / PLANT_MAP_GRID_H;
-            int col = (x - PLANT_MAP_START_X) / PLANT_MAP_GRID_W;
-            // SDL_Log("%d %d", row, col);
-            if (plant_map_[row][col] == false){
-                plant_map_[row][col] = true;
-                glm::vec2 pos;
-                pos.x = PLANT_MAP_START_X + col * PLANT_MAP_GRID_W + PLANT_MAP_GRID_W / 2;
-                pos.y = PLANT_MAP_START_Y + row * PLANT_MAP_GRID_H + PLANT_MAP_GRID_H / 3;
-                clicked_card_plant_->setPos(pos);
-                clicked_card_plant_ = nullptr;
+            int row = (y - PLANT_MAP_START_Y) / PLANT_MAP_GRID_H;  // 计算种植的行索引
+            int col = (x - PLANT_MAP_START_X) / PLANT_MAP_GRID_W;  // 计算种植的列索引
+            // SDL_Log("%d %d", row, col);  // 调试输出行列索引
+            if (plant_map_[row][col] == false){  // 如果该位置没有植物
+                plant_map_[row][col] = true;  // 标记该位置已被占用
+                glm::vec2 pos;  // 创建位置向量
+                pos.x = PLANT_MAP_START_X + col * PLANT_MAP_GRID_W + PLANT_MAP_GRID_W / 2;  // 计算x坐标
+                pos.y = PLANT_MAP_START_Y + row * PLANT_MAP_GRID_H + PLANT_MAP_GRID_H / 3;  // 计算y坐标
+                clicked_card_plant_->setPos(pos);  // 设置植物位置
+                clicked_card_plant_ = nullptr;  // 清空被点击的植物指针
+            }else{  // 如果该位置已有植物
+                clicked_card_plant_->setNeedRemove(true);  // 设置植物需要移除
             }
         }
-        else
+        else  // 如果鼠标不在种植区域内
         {
-            if (clicked_card_plant_ != nullptr)
+            if (clicked_card_plant_ != nullptr)  // 如果存在被点击的植物
             {
-                clicked_card_plant_->setNeedRemove(true);
+                clicked_card_plant_->setNeedRemove(true);  // 设置植物需要移除
             }
         }
     }

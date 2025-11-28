@@ -36,10 +36,17 @@ void Plant::init()
 void Plant::update(float dt)
 {
     Object::update(dt);
-    // if (frame_index_ < frame_count_ - 1){
-    //     frame_index_++;
-    //     plant_texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->type_][frame_index_].c_str());
-    // }
+    frame_timer_ += dt;
+    if (frame_timer_ >= 1.0f / fps_)
+    {
+        frame_index_++;
+        if (frame_index_ >= frame_count_)
+        {
+            frame_index_ = 0;
+        }
+        frame_timer_ = 0.0f;
+        plant_texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->p_type_][frame_index_].c_str());
+    }
 }
 
 void Plant::render()

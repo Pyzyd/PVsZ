@@ -27,6 +27,8 @@ class Plant : public Object
     Object *parent_ = nullptr;
     int frame_count_ = 0;
     int frame_index_ = 0;
+    int fps_ = 15;
+    float frame_timer_ = 0.0f;
 
 public:
     static Plant *addPlantChild(Object *parent, PlantType type, glm::vec2 pos);
