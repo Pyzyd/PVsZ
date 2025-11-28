@@ -10,8 +10,8 @@ Plant *Plant::addPlantChild(Object *parent, PlantType type, glm::vec2 pos)
 {
     Plant *child = new Plant();
     child->setPlantType(type);
-    child->setPos(pos);
     child->init();
+    child->setPos(pos);
     parent->addChild(child);
     return child;
 }
@@ -30,7 +30,7 @@ void Plant::init()
         return;
     }
     frame_count_ = static_cast<int>(plant_file_path[this->p_type_].size());
-
+    
 }
 
 void Plant::update(float dt)
