@@ -46,10 +46,11 @@ private:
     int card_num_ = 0;
     Plant* clicked_card_plant_ = nullptr;
     float sunshine_timer_ = 0.0f;
-    float sunshine_interval_ = 10.0f;
+    float sunshine_interval_ = 5.0f;
     int sunshine_num_ = 0;
     int total_sunshine_num_ = 0;
     std::array<std::array<bool, PLANT_MAP_GRID_COLS>, PLANT_MAP_GRID_ROWS> plant_map_;
+    glm::vec2 sunshine_collector_pos_;
 
     TTF_Font* font_ = nullptr;
 public:
@@ -69,6 +70,8 @@ public:
     void setClickedCardPlant(int index);
     void createRandomSunShine();
     void countTotalSunShine();
+
+    glm::vec2 getSunshineCollectorPos() { return sunshine_collector_pos_; }
 };
 
 

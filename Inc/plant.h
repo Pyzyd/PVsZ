@@ -24,7 +24,6 @@ class Plant : public Object
     PlantType p_type_;
     SDL_Texture *plant_texture_ = nullptr;
     glm::vec2 pos_ = glm::vec2(0, 0);
-    Object *parent_ = nullptr;
     int frame_count_ = 0;
     int frame_index_ = 0;
     int fps_ = 15;
@@ -40,7 +39,6 @@ public:
     // getters and setters
     PlantType getPlantType() const { return p_type_; }
     glm::vec2 getPos() const { return pos_; }
-    Object *getParent() const { return parent_; }
     SDL_Texture *getPlantTexture() const { return plant_texture_; }
     int getFrameCount() const { return frame_count_; }
     int getFrameIndex() const { return frame_index_; }
@@ -52,14 +50,12 @@ public:
         SDL_QueryTexture(plant_texture_, nullptr, nullptr, &w, &h);
         pos_ = pos - glm::vec2(w / 2, h / 2);
     }
-    void setParent(Object *parent) { parent_ = parent; }
     void setFrameCount(int count) { frame_count_ = count; }
     void setFrameIndex(int index) { frame_index_ = index; }
 };
 
 class Card : public Object
 {
-    Object *parent_ = nullptr;
     glm::vec2 pos_ = glm::vec2(0, 0);
     PlantType p_type_ = PlantType::NONE;
     SDL_Texture *card_texture_ = nullptr;

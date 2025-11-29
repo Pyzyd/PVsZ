@@ -14,6 +14,7 @@ SunShine *SunShine::addSunshineChild(Object *parent, glm::vec2 pos, glm::vec2 de
     sunshine->init();
     if (parent)
     {
+        sunshine->setParent(parent);
         parent->addChild(sunshine);
     }
     return sunshine;
@@ -48,29 +49,30 @@ void SunShine::update(float dt)
     {
         pos_ = dest_;
         speed_ = 0.0;
-        if (dest_ == glm::vec2((TOP_BAR_START_X + TOP_BAR_CARD_START_X) / 2.0f, TOP_BAR_CARD_HEIGHT / 2.0f))
+        if (dest_ == dynamic_cast<SceneMain *>(parent_)->getSunshineCollectorPos())
         {
             is_collected_ = true;
         }
     }
-    frame_time_ += dt;
-    if (frame_time_ >= 1.0 / fps_)
+    // frame_time_ += dt;
+    // if (frame_time_ >= 1.0 / fps_)
+    // {
+    frame_time_ = 0.0;
+    frame_index_++;
+    if (frame_index_ >= sunshine_file_path.size())
     {
-        frame_time_ = 0.0;
-        frame_index_++;
-        if (frame_index_ >= sunshine_file_path.size())
+        frame_index_ = 0;
+        if (is_collected_)
         {
-            frame_index_ = 0;
-            if (!clicked_ && is_collected_){
-                setNeedRemove(true);
-            }
-        }
-        texture_ = IMG_LoadTexture(game_.getRenderer(), sunshine_file_path[frame_index_].c_str());
-        if (!texture_)
-        {
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", IMG_GetError());
+            setNeedRemove(true);
         }
     }
+    texture_ = IMG_LoadTexture(game_.getRenderer(), sunshine_file_path[frame_index_].c_str());
+    if (!texture_)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", IMG_GetError());
+    }
+    // }
 }
 
 void SunShine::render()
@@ -102,8 +104,20 @@ void SunShine::clicked(SDL_Event &event)
             clicked_ = true;
             setSpeed(8 * speed_);
             setDest(glm::vec2((TOP_BAR_START_X + TOP_BAR_CARD_START_X) / 2.0f, TOP_BAR_CARD_HEIGHT / 2.0f));
+            auto parent = dynamic_cast<SceneMain *>(this->parent_);
+            parent->countTotalSunShine();
             // 播放音效
-            Mix_PlayChannel(-1, clicked_sound_, 0);
+            if (!has_sound_){
+                Mix_PlayChannel(-1, clicked_sound_, 0);
+                has_sound_ = true;
+            }
+        }
+    }
+    else if (event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT)
+    {
+        if (clicked_)
+        {
+            clicked_ = false;
         }
     }
 }

@@ -12,7 +12,10 @@ Plant *Plant::addPlantChild(Object *parent, PlantType type, glm::vec2 pos)
     child->setPlantType(type);
     child->init();
     child->setPos(pos);
-    parent->addChild(child);
+    if (parent){
+        child->setParent(parent);
+        parent->addChild(child);
+    }
     return child;
 }
 
@@ -91,7 +94,10 @@ Card *Card::addCardChild(Object* parent, PlantType type, glm::vec2 pos)
     child->setPlantType(type);
     child->setPos(pos);
     child->init();
-    parent->addChild(child);
+    if (parent){
+        child->setParent(parent);
+        parent->addChild(child);
+    }
     return child;
 }
 

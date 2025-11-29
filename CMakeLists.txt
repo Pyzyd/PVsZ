@@ -16,6 +16,7 @@ set(SOURCES
     src/scene_main.cpp
     src/scene_start.cpp
     src/sunshine.cpp
+    src/zombie.cpp
 )
 
 # 设置输出目录

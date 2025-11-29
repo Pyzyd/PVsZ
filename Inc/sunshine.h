@@ -21,10 +21,11 @@ class SunShine : public Object
     int frame_index_ = 0;
     int frame_count_ = 0;
     float frame_time_ = 0.0f;
-    int fps_ = 40;
+    int fps_ = 60;
     float speed_ = 20.0f;
     bool clicked_ = false;
     bool is_collected_ = false;
+    bool has_sound_ = false;
     Mix_Chunk *clicked_sound_ = nullptr;
 
 public:

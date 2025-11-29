@@ -29,6 +29,7 @@ void SceneMain::init()
         row.fill(false);
     }
     font_ = TTF_OpenFont("C:/Windows/Fonts/seguibl.ttf", 20);
+    sunshine_collector_pos_ = glm::vec2((TOP_BAR_START_X + TOP_BAR_CARD_START_X) / 2.0f, TOP_BAR_CARD_HEIGHT / 2.0f);
 }
 
 void SceneMain::handleEvents(SDL_Event &event)
@@ -40,7 +41,7 @@ void SceneMain::handleEvents(SDL_Event &event)
 void SceneMain::update(float dt)
 {
     Scene::update(dt);
-    countTotalSunShine();
+    // countTotalSunShine();
     if (sunshine_num_ < RANDOM_SUNSHINE_NUMS)
     {
         sunshine_timer_ += dt;
@@ -201,15 +202,22 @@ void SceneMain::createRandomSunShine()
 
 void SceneMain::countTotalSunShine()
 {
-    for (auto &child : children_)
+    // for (auto &child : children_)
+    // {
+    //     if (child->getObjectType() == ObjectType::SUNSHINE)
+    //     {
+    //         auto sunshine = dynamic_cast<SunShine *>(child);
+    //         if (sunshine->isClicked() && !sunshine->isCollected()){
+    //             sunshine->setClicked(false);
+    //             total_sunshine_num_++;
+    //             sunshine_num_--;
+    //         }
+    //     }
+    // }
+    total_sunshine_num_++;
+    sunshine_num_--;
+    if (sunshine_num_ < 0)
     {
-        if (child->getObjectType() == ObjectType::SUNSHINE)
-        {
-            auto sunshine = dynamic_cast<SunShine *>(child);
-            if (sunshine->isClicked() && !sunshine->isCollected()){
-                sunshine->setClicked(false);
-                total_sunshine_num_++;
-            }
-        }
+        sunshine_num_ = 0;
     }
 }

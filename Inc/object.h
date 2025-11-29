@@ -22,6 +22,7 @@ protected:
     Game& game_ = Game::getInstance();
     std::list<Object*> children_;
     ObjectType o_type_ = ObjectType::NONE;
+    Object* parent_ = nullptr;
 
     bool need_remove_ = false; 
     bool is_active_ = true;
@@ -34,6 +35,9 @@ public:
     virtual void update(float dt);
     virtual void render();
     virtual void clean();
+
+    Object* getParent() { return parent_; }
+    void setParent(Object* parent) { parent_ = parent; }
 
     void setObjectType(ObjectType type) { o_type_ = type; }
     ObjectType getObjectType() { return o_type_; }
