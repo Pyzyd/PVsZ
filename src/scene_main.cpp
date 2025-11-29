@@ -28,6 +28,7 @@ void SceneMain::init()
     {
         row.fill(false);
     }
+    font_ = TTF_OpenFont("C:/Windows/Fonts/seguibl.ttf", 20);
 }
 
 void SceneMain::handleEvents(SDL_Event &event)
@@ -39,6 +40,7 @@ void SceneMain::handleEvents(SDL_Event &event)
 void SceneMain::update(float dt)
 {
     Scene::update(dt);
+    countTotalSunShine();
     if (sunshine_num_ < RANDOM_SUNSHINE_NUMS)
     {
         sunshine_timer_ += dt;
@@ -54,6 +56,7 @@ void SceneMain::render()
 {
     game_.renderBackground(background_, BG_MAIN_START_X, BG_START_Y);
     renderTopBar();
+    renderSunShineNum();
     Scene::render();
 }
 
@@ -73,6 +76,11 @@ void SceneMain::clean()
     if (clicked_card_plant_ != nullptr)
     {
         clicked_card_plant_->setNeedRemove(true);
+        clicked_card_plant_ = nullptr;
+    }
+    if (font_){
+        TTF_CloseFont(font_);
+        font_ = nullptr;
     }
 }
 
@@ -87,6 +95,18 @@ void SceneMain::renderTopBar()
         dest.h = h;
         SDL_RenderCopyF(game_.getRenderer(), top_bar_, nullptr, &dest);
     }
+}
+
+void SceneMain::renderSunShineNum()
+{
+    auto text = std::to_string(total_sunshine_num_ * SunShine::value);
+    SDL_Color color = {0, 0, 0, 255};  // 设置文本颜色为黑色
+    SDL_Surface* surface = TTF_RenderUTF8_Blended(font_, text.c_str(), color);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(game_.getRenderer(), surface);
+    SDL_Rect rect = {SUNSHINE_NUM_TEXT_CENTER_X - surface->w / 2, SUNSHINE_NUM_TEXT_CENTER_Y - surface->h / 2, surface->w, surface->h};
+    SDL_RenderCopy(game_.getRenderer(), texture, NULL, &rect);
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
 }
 
 void SceneMain::userClickedCard(SDL_Event &event)
@@ -177,4 +197,19 @@ void SceneMain::createRandomSunShine()
     pos.y = game_.getRandomFloat(-TOP_BAR_CARD_HEIGHT, TOP_BAR_START_Y);
     SunShine::addSunshineChild(this, pos, glm::vec2(pos.x, game_.getRandomFloat(PLANT_MAP_START_Y, PLANT_MAP_START_Y + PLANT_MAP_HEIGHT)));
     sunshine_num_++;
+}
+
+void SceneMain::countTotalSunShine()
+{
+    for (auto &child : children_)
+    {
+        if (child->getObjectType() == ObjectType::SUNSHINE)
+        {
+            auto sunshine = dynamic_cast<SunShine *>(child);
+            if (sunshine->isClicked() && !sunshine->isCollected()){
+                sunshine->setClicked(false);
+                total_sunshine_num_++;
+            }
+        }
+    }
 }

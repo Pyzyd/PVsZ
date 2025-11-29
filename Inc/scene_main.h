@@ -3,6 +3,7 @@
 
 #include "scene.h"
 #include <array>
+#include <SDL_ttf.h>
 
 #define BG_MAIN_START_X -100
 #define BG_START_Y 0
@@ -29,6 +30,11 @@
 
 #define RANDOM_SUNSHINE_NUMS 10
 
+#define SUNSHINE_NUM_TEXT_START_X (276 + BG_MAIN_START_X)
+#define SUNSHINE_NUM_TEXT_START_Y (67 + BG_START_Y)
+#define SUNSHINE_NUM_TEXT_CENTER_X (SUNSHINE_NUM_TEXT_START_X + 20)
+#define SUNSHINE_NUM_TEXT_CENTER_Y (SUNSHINE_NUM_TEXT_START_Y + 16)
+
 class Plant;
 class SunShine;
 
@@ -42,7 +48,10 @@ private:
     float sunshine_timer_ = 0.0f;
     float sunshine_interval_ = 10.0f;
     int sunshine_num_ = 0;
+    int total_sunshine_num_ = 0;
     std::array<std::array<bool, PLANT_MAP_GRID_COLS>, PLANT_MAP_GRID_ROWS> plant_map_;
+
+    TTF_Font* font_ = nullptr;
 public:
     SceneMain() = default;
     virtual ~SceneMain() = default;
@@ -54,10 +63,12 @@ public:
     virtual void clean() override;
 
     void renderTopBar();
+    void renderSunShineNum();
 
     void userClickedCard(SDL_Event &event);
     void setClickedCardPlant(int index);
     void createRandomSunShine();
+    void countTotalSunShine();
 };
 
 

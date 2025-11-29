@@ -18,6 +18,9 @@ set(SOURCES
     src/sunshine.cpp
 )
 
+# 设置输出目录
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
 add_executable(${TARGET} ${SOURCES})
 if(MSVC)
     add_compile_options(/utf-8)
