@@ -68,7 +68,7 @@ void Plant::clean()
     }
 }
 
-void initFilePath()
+void intiPlantFilePath()
 {
     std::string path;
     for (int i = 0; i < static_cast<int>(PlantType::COUNT); ++i){

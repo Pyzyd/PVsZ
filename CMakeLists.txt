@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 
 project(P_VS_Z VERSION 0.1.0 LANGUAGES C CXX)
-
 # 设置 C++ 标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -15,6 +14,8 @@ set(SOURCES
     src/scene.cpp
     src/plant.cpp
     src/scene_main.cpp
+    src/scene_start.cpp
+    src/sunshine.cpp
 )
 
 add_executable(${TARGET} ${SOURCES})
@@ -74,3 +75,6 @@ if(WIN32)
         $<TARGET_FILE_DIR:${TARGET}>
     )
 endif()
+
+# "VCPKG_TARGET_TRIPLET": "x64-windows"
+# "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg_installed"

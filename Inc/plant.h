@@ -14,7 +14,7 @@ enum class PlantType
     NONE = -1,
 };
 
-void initFilePath();
+void intiPlantFilePath();
 
 extern std::map<PlantType, std::string> card_file_path;
 extern std::map<PlantType, std::vector<std::string>> plant_file_path;

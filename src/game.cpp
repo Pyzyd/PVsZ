@@ -1,5 +1,6 @@
 #include "game.h"
 #include "scene_main.h"
+#include "scene_start.h"
 
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -30,6 +31,8 @@ void Game::run()
 
 void Game::init(std::string title, int width, int height)
 {
+    gen = std::mt19937(rd());
+
     screen_size_ = glm::vec2(width, height);
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -74,7 +77,7 @@ void Game::init(std::string title, int width, int height)
     frame_delay_ = 1000.0f / FPS_;
 
     // 创建场景
-    current_scene_ = new SceneMain();
+    current_scene_ = new SceneStart();
     current_scene_->init();
 }
 
@@ -97,7 +100,11 @@ void Game::handleEvents()
 
 void Game::update(float dt)
 {
-    current_scene_->update(dt);
+    moveMouse();
+    if (current_scene_)
+    {
+        current_scene_->update(dt);
+    }
 }
 
 void Game::render()
@@ -134,13 +141,34 @@ void Game::clean()
     SDL_Quit();
 }
 
-void Game::renderBackground(SDL_Texture *texture)
+void Game::renderBackground(SDL_Texture *texture, int start_x, int start_y)
 {
     if (texture)
     {
-        SDL_Rect src_rect = {WINDOW_START_X, WINDOW_START_Y, static_cast<int>(screen_size_.x), static_cast<int>(screen_size_.y)};
-        // SDL_FRect dst_rect = {0, 0, screen_size_.x, screen_size_.y};
-        // SDL_QueryTexture(texture, nullptr, nullptr, &src_rect.w, &src_rect.h);
-        SDL_RenderCopyF(renderer_, texture, &src_rect, nullptr);
+        SDL_FRect dst_rect = {start_x, start_y, 0, 0};
+        int w,h;
+        SDL_QueryTexture(texture, nullptr, nullptr, &w, &h);
+        dst_rect.w = w;
+        dst_rect.h = h;
+        SDL_RenderCopyF(renderer_, texture, nullptr, &dst_rect);
     }
+}
+
+void Game::moveMouse()
+{
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    setMousePos(glm::vec2(x, y));
+}
+
+void Game::changeScene(Scene *scene)
+{
+    if (current_scene_ != nullptr)
+    {
+        current_scene_->clean();
+        delete current_scene_;
+        current_scene_ = nullptr;
+    }
+    current_scene_ = scene;
+    current_scene_->init();
 }

@@ -62,6 +62,7 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "array": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "random": "cpp"
     }
 }

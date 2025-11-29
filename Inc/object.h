@@ -3,14 +3,16 @@
 
 #include "game.h"
 #include <vector>
+#include <list>
 #include <string>
 
 
 bool fileExists(std::string path);
 
 enum class ObjectType {
-    PLANT,
     CARD,
+    PLANT,
+    SUNSHINE,
     NONE = -1,
 };
 
@@ -18,7 +20,7 @@ class Object
 {
 protected:
     Game& game_ = Game::getInstance();
-    std::vector<Object*> children_;
+    std::list<Object*> children_;
     ObjectType o_type_ = ObjectType::NONE;
 
     bool need_remove_ = false; 
@@ -41,10 +43,15 @@ public:
     void setActive(bool active) { is_active_ = active; }
     bool getActive() const { return is_active_; }
 
-    virtual void addChild(Object* child) { children_.push_back(child); }
+    virtual void addChild(Object* child) {
+        children_.push_back(child);
+        sortChildren();
+    }
     virtual void removeChild(Object* child) {
         children_.erase(std::remove(children_.begin(), children_.end(), child), children_.end());
     }
+
+    void sortChildren();
 };
 
 

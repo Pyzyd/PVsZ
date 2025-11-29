@@ -1,2 +1,4 @@
 res/
 build/
+
+vcpkg_installed/
