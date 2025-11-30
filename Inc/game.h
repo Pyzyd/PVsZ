@@ -23,6 +23,7 @@ class Game
     SDL_Renderer* renderer_ = nullptr;
 
     bool is_running_ = false;
+    bool is_over_ = false;
 
     Uint64 FPS_ = 60;         // 游戏帧率
     Uint64 frame_delay_ = 0;  // 帧延迟

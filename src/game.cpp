@@ -91,7 +91,6 @@ void Game::handleEvents()
         case SDL_QUIT:
             is_running_ = false;
             break;
-
         default:
             current_scene_->handleEvents(event);
         }

@@ -12,6 +12,7 @@ bool fileExists(std::string path);
 enum class ObjectType {
     CARD,
     PLANT,
+    ZOMBIE,
     SUNSHINE,
     NONE = -1,
 };

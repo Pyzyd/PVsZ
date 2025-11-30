@@ -53,6 +53,8 @@ private:
     glm::vec2 sunshine_collector_pos_;
 
     TTF_Font* font_ = nullptr;
+    float zombie_timer_ = 0.0f;
+    float zombie_interval_ = 8.0f;
 public:
     SceneMain() = default;
     virtual ~SceneMain() = default;
@@ -68,8 +70,9 @@ public:
 
     void userClickedCard(SDL_Event &event);
     void setClickedCardPlant(int index);
-    void createRandomSunShine();
+    void createRandomSunShine(float dt);
     void countTotalSunShine();
+    void createZombie(float dt);
 
     glm::vec2 getSunshineCollectorPos() { return sunshine_collector_pos_; }
 };

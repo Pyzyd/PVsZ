@@ -1,2 +1,88 @@
 #include "zombie.h"
+#include "scene_main.h"
+#include <SDL_image.h>
 
+std::vector<std::string> zombie_file_path;
+
+void initZombieFilePath()
+{
+    for (int i = 0; i < 22; i++)
+    {
+        zombie_file_path.push_back("res/zm/" + std::to_string(i + 1) + ".png");
+    }
+}
+
+Zombie *Zombie::addZombieChild(Object *parent, glm::vec2 pos, float speed)
+{
+    Zombie *zombie = new Zombie();
+    zombie->setPos(pos);
+    zombie->setSpeed(speed);
+    zombie->init();
+    if (parent)
+    {
+        zombie->setParent(parent);
+        parent->addChild(zombie);
+    }
+    return zombie;
+}
+
+void Zombie::init()
+{
+    Object::init();
+    o_type_ = ObjectType::ZOMBIE;
+    texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_file_path[frame_index_].c_str());
+    if (!texture_)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", SDL_GetError());
+    }
+    SDL_QueryTexture(texture_, nullptr, nullptr, &width_, &height_);
+    frame_count_ = zombie_file_path.size();
+}
+
+void Zombie::handleEvents(SDL_Event &event)
+{
+    Object::handleEvents(event);
+}
+
+void Zombie::update(float dt)
+{
+    Object::update(dt);
+    frame_timer_ += dt;
+    pos_.x = pos_.x - speed_ * dt;
+    if (pos_.x < -width_)
+    {
+        parent_->setActive(false);
+        return;
+    }
+    if (frame_timer_ >= frame_delay_)
+    {
+        frame_timer_ = 0;
+        frame_index_++;
+        if (frame_index_ >= frame_count_)
+        {
+            frame_index_ = 0;
+        }
+        texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_file_path[frame_index_].c_str());
+        if (!texture_)
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", SDL_GetError());
+        }
+    }
+}
+
+void Zombie::render()
+{
+    Object::render();
+    SDL_Rect rect = {static_cast<int>(pos_.x - width_ / 2.0f), static_cast<int>(pos_.y - height_ / 2.0f), width_, height_};
+    SDL_RenderCopy(game_.getRenderer(), texture_, nullptr, &rect);
+}
+
+void Zombie::clean()
+{
+    Object::clean();
+    if (texture_)
+    {
+        SDL_DestroyTexture(texture_);
+        texture_ = nullptr;
+    }
+}

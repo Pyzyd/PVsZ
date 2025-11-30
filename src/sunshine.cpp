@@ -102,12 +102,15 @@ void SunShine::clicked(SDL_Event &event)
         if (glm::distance(glm::vec2(event.button.x, event.button.y), pos_) < width_ / 2.0f && !clicked_)
         {
             clicked_ = true;
-            setSpeed(8 * speed_);
+            if (speed_ == 0.0){
+                setSpeed(30);
+            }
+            setSpeed(12 * speed_);
             setDest(glm::vec2((TOP_BAR_START_X + TOP_BAR_CARD_START_X) / 2.0f, TOP_BAR_CARD_HEIGHT / 2.0f));
-            auto parent = dynamic_cast<SceneMain *>(this->parent_);
-            parent->countTotalSunShine();
             // 播放音效
             if (!has_sound_){
+                auto parent = dynamic_cast<SceneMain *>(this->parent_);
+                parent->countTotalSunShine();
                 Mix_PlayChannel(-1, clicked_sound_, 0);
                 has_sound_ = true;
             }

@@ -1,6 +1,8 @@
 #include "scene_main.h"
 #include "plant.h"
 #include "sunshine.h"
+#include "zombie.h"
+#include "scene_start.h"
 
 #include <SDL_image.h>
 
@@ -17,8 +19,9 @@ void SceneMain::init()
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", IMG_GetError());
     }
-    intiPlantFilePath(); // 初始化文件路径
+    intiPlantFilePath();    // 初始化文件路径
     initSunshineFilePath(); // 初始化阳光文件路径
+    initZombieFilePath();   // 初始化僵尸文件路径
     card_num_ = (TOP_BAR_CARD_NUM > static_cast<int>(PlantType::COUNT) ? static_cast<int>(PlantType::COUNT) : TOP_BAR_CARD_NUM);
     for (int i = 0; i < card_num_; ++i)
     {
@@ -35,21 +38,22 @@ void SceneMain::init()
 void SceneMain::handleEvents(SDL_Event &event)
 {
     Scene::handleEvents(event);
+    if (event.type == SDL_KEYDOWN){
+        if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE){
+            auto scene = new SceneStart();
+            game_.changeScene(scene);
+        }
+    }
     userClickedCard(event);
 }
 
 void SceneMain::update(float dt)
 {
     Scene::update(dt);
-    // countTotalSunShine();
-    if (sunshine_num_ < RANDOM_SUNSHINE_NUMS)
-    {
-        sunshine_timer_ += dt;
-        if (sunshine_timer_ >= sunshine_interval_)
-        {
-            createRandomSunShine();
-            sunshine_timer_ = 0;
-        }
+    createRandomSunShine(dt);
+    createZombie(dt);
+    if (!is_active_){
+        game_.changeScene(new SceneStart());
     }
 }
 
@@ -79,7 +83,8 @@ void SceneMain::clean()
         clicked_card_plant_->setNeedRemove(true);
         clicked_card_plant_ = nullptr;
     }
-    if (font_){
+    if (font_)
+    {
         TTF_CloseFont(font_);
         font_ = nullptr;
     }
@@ -101,9 +106,9 @@ void SceneMain::renderTopBar()
 void SceneMain::renderSunShineNum()
 {
     auto text = std::to_string(total_sunshine_num_ * SunShine::value);
-    SDL_Color color = {0, 0, 0, 255};  // 设置文本颜色为黑色
-    SDL_Surface* surface = TTF_RenderUTF8_Blended(font_, text.c_str(), color);
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(game_.getRenderer(), surface);
+    SDL_Color color = {0, 0, 0, 255}; // 设置文本颜色为黑色
+    SDL_Surface *surface = TTF_RenderUTF8_Blended(font_, text.c_str(), color);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(game_.getRenderer(), surface);
     SDL_Rect rect = {SUNSHINE_NUM_TEXT_CENTER_X - surface->w / 2, SUNSHINE_NUM_TEXT_CENTER_Y - surface->h / 2, surface->w, surface->h};
     SDL_RenderCopy(game_.getRenderer(), texture, NULL, &rect);
     SDL_FreeSurface(surface);
@@ -191,13 +196,21 @@ void SceneMain::setClickedCardPlant(int index)
     }
 }
 
-void SceneMain::createRandomSunShine()
+void SceneMain::createRandomSunShine(float dt)
 {
-    glm::vec2 pos;
-    pos.x = game_.getRandomFloat(PLANT_MAP_START_X, PLANT_MAP_START_X + PLANT_MAP_WIDTH);
-    pos.y = game_.getRandomFloat(-TOP_BAR_CARD_HEIGHT, TOP_BAR_START_Y);
-    SunShine::addSunshineChild(this, pos, glm::vec2(pos.x, game_.getRandomFloat(PLANT_MAP_START_Y, PLANT_MAP_START_Y + PLANT_MAP_HEIGHT)));
-    sunshine_num_++;
+    if (sunshine_num_ < RANDOM_SUNSHINE_NUMS)
+    {
+        sunshine_timer_ += dt;
+        if (sunshine_timer_ >= sunshine_interval_)
+        {
+            glm::vec2 pos;
+            pos.x = game_.getRandomFloat(PLANT_MAP_START_X, PLANT_MAP_START_X + PLANT_MAP_WIDTH);
+            pos.y = game_.getRandomFloat(-TOP_BAR_CARD_HEIGHT, TOP_BAR_START_Y);
+            SunShine::addSunshineChild(this, pos, glm::vec2(pos.x, game_.getRandomFloat(PLANT_MAP_START_Y, PLANT_MAP_START_Y + PLANT_MAP_HEIGHT)));
+            sunshine_num_++;
+            sunshine_timer_ = 0;
+        }
+    }
 }
 
 void SceneMain::countTotalSunShine()
@@ -219,5 +232,19 @@ void SceneMain::countTotalSunShine()
     if (sunshine_num_ < 0)
     {
         sunshine_num_ = 0;
+    }
+}
+
+void SceneMain::createZombie(float dt)
+{
+    zombie_timer_ += dt;
+    if (zombie_timer_ > zombie_interval_)
+    {
+        zombie_timer_ = 0;
+        glm::vec2 pos;
+        pos.x = game_.getRandomFloat(PLANT_MAP_START_X + PLANT_MAP_WIDTH, PLANT_MAP_START_X + PLANT_MAP_WIDTH + PLANT_MAP_GRID_W);
+        pos.y = PLANT_MAP_START_Y + PLANT_MAP_GRID_H / 4.0 + game_.getRandomInt(0, PLANT_MAP_GRID_ROWS - 1) * PLANT_MAP_GRID_H;
+        Zombie::addZombieChild(this, pos);
+        zombie_interval_ = game_.getRandomFloat(3.0, 8.0);
     }
 }
