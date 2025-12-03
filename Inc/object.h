@@ -24,6 +24,9 @@ protected:
     std::list<Object*> children_;
     ObjectType o_type_ = ObjectType::NONE;
     Object* parent_ = nullptr;
+    SDL_Texture* texture_ = nullptr;
+    int width_ = 0;
+    int height_ = 0;
 
     bool need_remove_ = false; 
     bool is_active_ = true;

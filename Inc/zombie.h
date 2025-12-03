@@ -2,6 +2,7 @@
 #define __ZOMBIE_H
 
 #include "object.h"
+#include "actor.h"
 #include <vector>
 #include <string>
 
@@ -9,20 +10,16 @@ extern std::vector<std::string> zombie_file_path;
 
 void initZombieFilePath();
 
-class Zombie : public Object
+class Zombie : public Actor
 {
-    glm::vec2 pos_ = glm::vec2(0,0);
-    SDL_Texture* texture_ = nullptr;
     int frame_index_ = 0;
     int frame_count_ = 0;
     float frame_timer_ = 0.0f;
     float frame_delay_ = 0.1f;
     int fps_ = 10;
-    int width_ = 0;
-    int height_ = 0;
     float speed_ = 3.0f;
 public:
-    static Zombie* addZombieChild(Object* parent, glm::vec2 pos, float speed = 10.0f);
+    static Zombie* addZombieChild(Object* parent, glm::vec2 pos, glm::ivec2 coor, float speed = 10.0f);
 
     virtual void init() override;
     virtual void handleEvents(SDL_Event& event) override;
@@ -30,9 +27,11 @@ public:
     virtual void render() override;
     virtual void clean() override;
 
+    void takeDamage(int damage) override;
+    void die() override;
+
     // getters and setters
-    glm::vec2 getPos() const { return pos_; }
-    void setPos(glm::vec2 pos) { pos_ = pos; }
+    
     SDL_Texture* getTexture() const { return texture_; }
     void setTexture(SDL_Texture* texture) { texture_ = texture; }
     int getFrameIndex() const { return frame_index_; }

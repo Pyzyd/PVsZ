@@ -36,6 +36,7 @@
 #define SUNSHINE_NUM_TEXT_CENTER_Y (SUNSHINE_NUM_TEXT_START_Y + 16)
 
 class Plant;
+class Zombie;
 class SunShine;
 
 class SceneMain : public Scene
@@ -51,6 +52,7 @@ private:
     int total_sunshine_num_ = 0;
     std::array<std::array<bool, PLANT_MAP_GRID_COLS>, PLANT_MAP_GRID_ROWS> plant_map_;
     glm::vec2 sunshine_collector_pos_;
+    std::vector<bool> has_zombie_;
 
     TTF_Font* font_ = nullptr;
     float zombie_timer_ = 0.0f;
@@ -73,8 +75,13 @@ public:
     void createRandomSunShine(float dt);
     void countTotalSunShine();
     void createZombie(float dt);
+    void plantAttackZombie();
+    void ZombieEmerge();
+    Plant* getPlantFromMapCoor(glm::ivec2 map_coor);
+    Zombie* getZombieFromMapCoor(glm::ivec2 map_coor);
 
     glm::vec2 getSunshineCollectorPos() { return sunshine_collector_pos_; }
+    static glm::ivec2 posToMapCoor(glm::vec2 pos);
 };
 
 

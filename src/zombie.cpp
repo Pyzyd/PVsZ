@@ -12,10 +12,11 @@ void initZombieFilePath()
     }
 }
 
-Zombie *Zombie::addZombieChild(Object *parent, glm::vec2 pos, float speed)
+Zombie *Zombie::addZombieChild(Object *parent, glm::vec2 pos, glm::ivec2 coor, float speed)
 {
     Zombie *zombie = new Zombie();
     zombie->setPos(pos);
+    zombie->setCoor(coor);
     zombie->setSpeed(speed);
     zombie->init();
     if (parent)
@@ -28,7 +29,7 @@ Zombie *Zombie::addZombieChild(Object *parent, glm::vec2 pos, float speed)
 
 void Zombie::init()
 {
-    Object::init();
+    Actor::init();
     o_type_ = ObjectType::ZOMBIE;
     texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_file_path[frame_index_].c_str());
     if (!texture_)
@@ -41,14 +42,15 @@ void Zombie::init()
 
 void Zombie::handleEvents(SDL_Event &event)
 {
-    Object::handleEvents(event);
+    Actor::handleEvents(event);
 }
 
 void Zombie::update(float dt)
 {
-    Object::update(dt);
+    Actor::update(dt);
     frame_timer_ += dt;
     pos_.x = pos_.x - speed_ * dt;
+    coor_ = SceneMain::posToMapCoor(pos_);
     if (pos_.x < -width_)
     {
         parent_->setActive(false);
@@ -72,17 +74,25 @@ void Zombie::update(float dt)
 
 void Zombie::render()
 {
-    Object::render();
+    Actor::render();
     SDL_Rect rect = {static_cast<int>(pos_.x - width_ / 2.0f), static_cast<int>(pos_.y - height_ / 2.0f), width_, height_};
     SDL_RenderCopy(game_.getRenderer(), texture_, nullptr, &rect);
 }
 
 void Zombie::clean()
 {
-    Object::clean();
+    Actor::clean();
     if (texture_)
     {
         SDL_DestroyTexture(texture_);
         texture_ = nullptr;
     }
+}
+
+void Zombie::takeDamage(int damage)
+{
+}
+
+void Zombie::die()
+{
 }

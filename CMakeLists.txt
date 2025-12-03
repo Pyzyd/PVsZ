@@ -17,6 +17,8 @@ set(SOURCES
     src/scene_start.cpp
     src/sunshine.cpp
     src/zombie.cpp
+    src/bullet.cpp
+    src/actor.cpp
 )
 
 # 设置输出目录

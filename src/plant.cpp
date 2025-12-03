@@ -1,6 +1,6 @@
 #include "plant.h"
 #include "scene_main.h"
-
+#include "bullet.h"
 #include <SDL_image.h>
 
 std::map<PlantType, std::string> card_file_path;
@@ -21,25 +21,26 @@ Plant *Plant::addPlantChild(Object *parent, PlantType type, glm::vec2 pos)
 
 void Plant::init()
 {
-    Object::init();
+    Actor::init();
     o_type_ = ObjectType::PLANT;
     if (this->p_type_ == PlantType::COUNT || this->p_type_ == PlantType::NONE){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Invalid plant type");
         return;
     }
-    plant_texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->p_type_][frame_index_].c_str());
-    if (plant_texture_ == nullptr){
+    texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->p_type_][frame_index_].c_str());
+    if (texture_ == nullptr){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", SDL_GetError());
         return;
     }
     frame_count_ = static_cast<int>(plant_file_path[this->p_type_].size());
-    
+    SDL_QueryTexture(texture_, nullptr, nullptr, &width_, &height_);
 }
 
 void Plant::update(float dt)
 {
-    Object::update(dt);
+    Actor::update(dt);
     frame_timer_ += dt;
+    attack_timer_ += dt;
     if (frame_timer_ >= 1.0f / fps_)
     {
         frame_index_++;
@@ -48,26 +49,53 @@ void Plant::update(float dt)
             frame_index_ = 0;
         }
         frame_timer_ = 0.0f;
-        plant_texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->p_type_][frame_index_].c_str());
+        texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->p_type_][frame_index_].c_str());
     }
+    if (is_attacking_){
+        if (attack_timer_ >= attack_interval_){
+            attack();
+            attack_timer_ = 0.0f;
+        }
+    }
+
 }
 
 void Plant::render()
 {
-    Object::render();
-    SDL_FRect dst = {this->pos_.x, this->pos_.y, 0, 0};
-    int w, h;
-    SDL_QueryTexture(plant_texture_, nullptr, nullptr, &w, &h);
-    dst.w = w;
-    dst.h = h;
-    SDL_RenderCopyF(game_.getRenderer(), plant_texture_, nullptr, &dst);
+    SDL_FRect dst = {this->pos_.x - width_ / 2.0, this->pos_.y - height_ / 2.0, static_cast<float>(width_), static_cast<float>(height_)};
+    SDL_RenderCopyF(game_.getRenderer(), texture_, nullptr, &dst);
+    Actor::render();
 }
 
 void Plant::clean()
 {
-    Object::clean();
-    if (plant_texture_ != nullptr){
-        SDL_DestroyTexture(plant_texture_);
+    Actor::clean();
+    if (texture_ != nullptr){
+        SDL_DestroyTexture(texture_);
+    }
+}
+
+void Plant::takeDamage(int damage)
+{
+}
+
+void Plant::die()
+{
+}
+
+void Plant::attack()
+{
+    switch (p_type_)
+    {
+    case PlantType::PEA:
+        Bullet::addBulletChild(this, PlantType::PEA, glm::vec2(pos_.x + width_ / 2.0, pos_.y - height_ / 4.0));
+        break;
+    
+    case PlantType::SUNFLOWER:
+    case PlantType::COUNT:
+    case PlantType::NONE:
+    default:
+        break;
     }
 }
 
@@ -109,12 +137,13 @@ void Card::init()
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Invalid plant type");
         return;
     }
-    card_texture_ = IMG_LoadTexture(game_.getRenderer() , card_file_path[this->p_type_].c_str());
-    if (card_texture_ == nullptr){
+    texture_ = IMG_LoadTexture(game_.getRenderer() , card_file_path[this->p_type_].c_str());
+    if (texture_ == nullptr){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", SDL_GetError());
         return;
     }
     bar_index_ = static_cast<int>((pos_.x - TOP_BAR_CARD_START_X) / TOP_BAR_CARD_INTERVAL);
+    SDL_QueryTexture(texture_, nullptr, nullptr, &width_, &height_);
 }
 
 void Card::update(float dt)
@@ -125,18 +154,14 @@ void Card::update(float dt)
 void Card::render()
 {
     Object::render();
-    SDL_FRect dst = {this->pos_.x, this->pos_.y, 0, 0};
-    int w, h;
-    SDL_QueryTexture(card_texture_, nullptr, nullptr, &w, &h);
-    dst.w = w;
-    dst.h = h;
-    SDL_RenderCopyF(game_.getRenderer(), card_texture_, nullptr, &dst);
+    SDL_FRect dst = {this->pos_.x, this->pos_.y, static_cast<float>(width_), static_cast<float>(height_)};
+    SDL_RenderCopyF(game_.getRenderer(), texture_, nullptr, &dst);
 }
 
 void Card::clean()
 {
     Object::clean();
-    if (card_texture_ != nullptr){
-        SDL_DestroyTexture(card_texture_);
+    if (texture_ != nullptr){
+        SDL_DestroyTexture(texture_);
     }
 }

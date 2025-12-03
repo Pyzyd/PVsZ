@@ -2,6 +2,7 @@
 #include "plant.h"
 #include "sunshine.h"
 #include "zombie.h"
+#include "bullet.h"
 #include "scene_start.h"
 
 #include <SDL_image.h>
@@ -22,6 +23,7 @@ void SceneMain::init()
     intiPlantFilePath();    // 初始化文件路径
     initSunshineFilePath(); // 初始化阳光文件路径
     initZombieFilePath();   // 初始化僵尸文件路径
+    initBulletFilePath();   // 初始化子弹文件路径
     card_num_ = (TOP_BAR_CARD_NUM > static_cast<int>(PlantType::COUNT) ? static_cast<int>(PlantType::COUNT) : TOP_BAR_CARD_NUM);
     for (int i = 0; i < card_num_; ++i)
     {
@@ -33,13 +35,19 @@ void SceneMain::init()
     }
     font_ = TTF_OpenFont("C:/Windows/Fonts/seguibl.ttf", 20);
     sunshine_collector_pos_ = glm::vec2((TOP_BAR_START_X + TOP_BAR_CARD_START_X) / 2.0f, TOP_BAR_CARD_HEIGHT / 2.0f);
+    for (int i = 0; i < PLANT_MAP_GRID_ROWS; ++i)
+    {
+        has_zombie_.push_back(false);
+    }
 }
 
 void SceneMain::handleEvents(SDL_Event &event)
 {
     Scene::handleEvents(event);
-    if (event.type == SDL_KEYDOWN){
-        if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE){
+    if (event.type == SDL_KEYDOWN)
+    {
+        if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+        {
             auto scene = new SceneStart();
             game_.changeScene(scene);
         }
@@ -52,7 +60,9 @@ void SceneMain::update(float dt)
     Scene::update(dt);
     createRandomSunShine(dt);
     createZombie(dt);
-    if (!is_active_){
+    plantAttackZombie();
+    if (!is_active_)
+    {
         game_.changeScene(new SceneStart());
     }
 }
@@ -158,8 +168,9 @@ void SceneMain::userClickedCard(SDL_Event &event)
                 plant_map_[row][col] = true; // 标记该位置已被占用
                 glm::vec2 pos;
                 pos.x = PLANT_MAP_START_X + col * PLANT_MAP_GRID_W + PLANT_MAP_GRID_W / 2;
-                pos.y = PLANT_MAP_START_Y + row * PLANT_MAP_GRID_H + PLANT_MAP_GRID_H / 3;
+                pos.y = PLANT_MAP_START_Y + PLANT_MAP_GRID_H / 8.0 + row * PLANT_MAP_GRID_H + PLANT_MAP_GRID_H / 3;
                 clicked_card_plant_->setPos(pos);
+                clicked_card_plant_->setCoor(glm::ivec2(col, row));
                 clicked_card_plant_ = nullptr; // 清空被点击的植物指针
             }
             else
@@ -244,7 +255,86 @@ void SceneMain::createZombie(float dt)
         glm::vec2 pos;
         pos.x = game_.getRandomFloat(PLANT_MAP_START_X + PLANT_MAP_WIDTH, PLANT_MAP_START_X + PLANT_MAP_WIDTH + PLANT_MAP_GRID_W);
         pos.y = PLANT_MAP_START_Y + PLANT_MAP_GRID_H / 4.0 + game_.getRandomInt(0, PLANT_MAP_GRID_ROWS - 1) * PLANT_MAP_GRID_H;
-        Zombie::addZombieChild(this, pos);
+        Zombie::addZombieChild(this, pos, posToMapCoor(pos));
         zombie_interval_ = game_.getRandomFloat(3.0, 8.0);
     }
+}
+
+void SceneMain::plantAttackZombie()
+{
+    ZombieEmerge();
+    for (int i = 0; i < PLANT_MAP_GRID_ROWS; i++)
+    {
+        if (has_zombie_[i])
+        {
+            for (int j = 0; j < PLANT_MAP_GRID_COLS; j++)
+            {
+                if (plant_map_[i][j])
+                {
+                    auto plant = getPlantFromMapCoor(glm::ivec2(j, i));
+                    if (plant != nullptr)
+                    {
+                        plant->setIsAttacking(true);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void SceneMain::ZombieEmerge()
+{
+    for (int i = 0; i < PLANT_MAP_GRID_ROWS; i++)
+    {
+        for (int j = 0; j < PLANT_MAP_GRID_COLS; j++)
+        {
+            auto zombie = getZombieFromMapCoor(glm::ivec2(j, i));
+            if (zombie != nullptr)
+            {
+                has_zombie_[i] = true;
+                break;
+            }
+            has_zombie_[i] = false;
+        }
+    }
+}
+
+Plant *SceneMain::getPlantFromMapCoor(glm::ivec2 map_coor)
+{
+    for (auto &child : children_)
+    {
+        if (child->getObjectType() == ObjectType::PLANT)
+        {
+            auto plant = dynamic_cast<Plant *>(child);
+            if (plant->getCoor() == map_coor)
+            {
+                return plant;
+            }
+        }
+    }
+    return nullptr;
+}
+
+Zombie *SceneMain::getZombieFromMapCoor(glm::ivec2 map_coor)
+{
+    for (auto &child : children_)
+    {
+        if (child->getObjectType() == ObjectType::ZOMBIE)
+        {
+            auto zombie = dynamic_cast<Zombie *>(child);
+            if (zombie->getCoor() == map_coor)
+            {
+                return zombie;
+            }
+        }
+    }
+    return nullptr;
+}
+
+glm::ivec2 SceneMain::posToMapCoor(glm::vec2 pos)
+{
+    glm::ivec2 coor;
+    coor.x = (pos.x - PLANT_MAP_START_X) / PLANT_MAP_GRID_W;
+    coor.y = (pos.y - PLANT_MAP_START_Y) / PLANT_MAP_GRID_H;
+    return coor;
 }
