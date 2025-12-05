@@ -31,6 +31,7 @@ void Zombie::init()
 {
     Actor::init();
     o_type_ = ObjectType::ZOMBIE;
+    health_ = 100;
     texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_file_path[frame_index_].c_str());
     if (!texture_)
     {
@@ -91,8 +92,15 @@ void Zombie::clean()
 
 void Zombie::takeDamage(int damage)
 {
+    health_ -= damage;
+    if (health_ <= 0)
+    {
+        die();
+        setNeedRemove(true);
+    }
 }
 
 void Zombie::die()
 {
+    setActive(false);
 }

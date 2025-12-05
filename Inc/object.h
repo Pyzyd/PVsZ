@@ -12,6 +12,7 @@ bool fileExists(std::string path);
 enum class ObjectType {
     CARD,
     PLANT,
+    PLANT_BULLET,
     ZOMBIE,
     SUNSHINE,
     NONE = -1,
@@ -50,6 +51,8 @@ public:
     void setNeedRemove(bool need_remove) { need_remove_ = need_remove; }
     void setActive(bool active) { is_active_ = active; }
     bool getActive() const { return is_active_; }
+
+    std::list<Object*>& getChildren() { return children_; }
 
     virtual void addChild(Object* child) {
         children_.push_back(child);

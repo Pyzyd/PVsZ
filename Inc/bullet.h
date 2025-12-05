@@ -21,6 +21,8 @@ class Bullet : public Object
     glm::vec2 dir_ = glm::vec2(0, 0);
     float speed_ = 0;
     bool is_explosion_ = false;
+    float explosion_timer_ = 0.0f;
+    float explosion_duration_ = 0.15f;
 public:
 
     static Bullet* addBulletChild(Object* parent, PlantType planttype, glm::vec2 pos, glm::vec2 dir = glm::vec2(1, 0), float speed = 240.0f);

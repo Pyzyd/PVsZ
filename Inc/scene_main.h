@@ -38,6 +38,7 @@
 class Plant;
 class Zombie;
 class SunShine;
+class Bullet;
 
 class SceneMain : public Scene
 {
@@ -70,6 +71,8 @@ public:
     void renderTopBar();
     void renderSunShineNum();
 
+    void updatePlant();
+
     void userClickedCard(SDL_Event &event);
     void setClickedCardPlant(int index);
     void createRandomSunShine(float dt);
@@ -77,8 +80,10 @@ public:
     void createZombie(float dt);
     void plantAttackZombie();
     void ZombieEmerge();
+    void ZombieTakeDamage(Bullet* bullet);
     Plant* getPlantFromMapCoor(glm::ivec2 map_coor);
     Zombie* getZombieFromMapCoor(glm::ivec2 map_coor);
+
 
     glm::vec2 getSunshineCollectorPos() { return sunshine_collector_pos_; }
     static glm::ivec2 posToMapCoor(glm::vec2 pos);

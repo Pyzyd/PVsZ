@@ -23,6 +23,8 @@ Bullet *Bullet::addBulletChild(Object *parent, PlantType planttype, glm::vec2 po
 void Bullet::init()
 {
     Object::init();
+    is_explosion_ = false;
+    o_type_ = ObjectType::PLANT_BULLET;
     switch (planttype_)
     {
     case PlantType::PEA:
@@ -46,8 +48,9 @@ void Bullet::update(float dt)
     if (texture_ && is_explosion_){
         speed_ = 0;
         texture_ = IMG_LoadTexture(game_.getRenderer(), bullet_explosion_file[planttype_].c_str());
+        explosion_timer_ += dt;
     }
-    if (is_explosion_ || pos_.x > game_.getScreenSize().x){
+    if (explosion_timer_ > explosion_duration_ && (is_explosion_ || pos_.x > game_.getScreenSize().x)){
         setNeedRemove(true);
     }
 }

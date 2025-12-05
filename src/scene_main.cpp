@@ -60,7 +60,7 @@ void SceneMain::update(float dt)
     Scene::update(dt);
     createRandomSunShine(dt);
     createZombie(dt);
-    plantAttackZombie();
+    updatePlant();
     if (!is_active_)
     {
         game_.changeScene(new SceneStart());
@@ -123,6 +123,32 @@ void SceneMain::renderSunShineNum()
     SDL_RenderCopy(game_.getRenderer(), texture, NULL, &rect);
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
+}
+
+void SceneMain::updatePlant()
+{
+    plantAttackZombie();
+    for (auto &child : children_)
+    {
+        if (child->getObjectType() == ObjectType::PLANT)
+        {
+            auto plant = dynamic_cast<Plant *>(child);
+            if (plant != nullptr)
+            {
+                for (auto &child : plant->getChildren())
+                {
+                    if (child->getObjectType() == ObjectType::PLANT_BULLET)
+                    {
+                        auto bullet = dynamic_cast<Bullet *>(child);
+                        if (bullet != nullptr)
+                        {
+                            ZombieTakeDamage(bullet);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void SceneMain::userClickedCard(SDL_Event &event)
@@ -299,6 +325,21 @@ void SceneMain::ZombieEmerge()
     }
 }
 
+void SceneMain::ZombieTakeDamage(Bullet* bullet)
+{
+    for (auto &child : children_)
+    {
+        if (child->getObjectType() == ObjectType::ZOMBIE)
+        {
+            auto zombie = dynamic_cast<Zombie *>(child);
+            if (!(bullet->isExplosion()) && glm::length(zombie->getPos() - bullet->getPos()) < 20.0f){
+                zombie->takeDamage(bullet->getDamage());
+                bullet->setExplosion(true);
+            }
+        }
+    }
+}
+
 Plant *SceneMain::getPlantFromMapCoor(glm::ivec2 map_coor)
 {
     for (auto &child : children_)
@@ -330,6 +371,7 @@ Zombie *SceneMain::getZombieFromMapCoor(glm::ivec2 map_coor)
     }
     return nullptr;
 }
+
 
 glm::ivec2 SceneMain::posToMapCoor(glm::vec2 pos)
 {

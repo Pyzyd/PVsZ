@@ -6,7 +6,7 @@
 class Actor : public Object
 {
 protected:
-    int health;
+    int health_ = 0;
     glm::ivec2 coor_ = glm::ivec2(0,0);
     glm::vec2 pos_ = glm::vec2(0,0);
 

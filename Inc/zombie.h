@@ -17,7 +17,7 @@ class Zombie : public Actor
     float frame_timer_ = 0.0f;
     float frame_delay_ = 0.1f;
     int fps_ = 10;
-    float speed_ = 3.0f;
+    float speed_ = 6.0f;
 public:
     static Zombie* addZombieChild(Object* parent, glm::vec2 pos, glm::ivec2 coor, float speed = 10.0f);
 
