@@ -57,7 +57,6 @@ void Plant::update(float dt)
             attack_timer_ = 0.0f;
         }
     }
-
 }
 
 void Plant::render()
@@ -80,6 +79,10 @@ void Plant::takeDamage(int damage)
 }
 
 void Plant::die()
+{
+}
+
+void Plant::hurt()
 {
 }
 

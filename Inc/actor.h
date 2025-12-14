@@ -22,6 +22,7 @@ public:
 
     virtual void takeDamage(int damage) = 0;
     virtual void die() = 0;
+    virtual void hurt() = 0;
 };
 
 #endif /* __ACTOR_H */

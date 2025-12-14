@@ -104,3 +104,7 @@ void Zombie::die()
 {
     setActive(false);
 }
+
+void Zombie::hurt()
+{
+}

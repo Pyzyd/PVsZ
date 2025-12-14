@@ -29,6 +29,7 @@ public:
 
     void takeDamage(int damage) override;
     void die() override;
+    void hurt() override;
 
     // getters and setters
     
