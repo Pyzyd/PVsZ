@@ -6,8 +6,9 @@
 #include <vector>
 #include <string>
 
-extern std::vector<std::string> zombie_file_path;
-
+extern std::vector<std::string> zombie_move_files;
+extern std::vector<std::string> zombie_die_files;
+extern std::vector<std::string> zombie_eat_files;
 void initZombieFilePath();
 
 class Zombie : public Actor
@@ -18,6 +19,8 @@ class Zombie : public Actor
     float frame_delay_ = 0.1f;
     int fps_ = 10;
     float speed_ = 6.0f;
+    bool is_eating_ = false;
+    int damage_ = 10;
 public:
     static Zombie* addZombieChild(Object* parent, glm::vec2 pos, glm::ivec2 coor, float speed = 10.0f);
 
@@ -27,12 +30,30 @@ public:
     virtual void render() override;
     virtual void clean() override;
 
+    void move(float dt);
+    void eat(float dt);
+
     void takeDamage(int damage) override;
-    void die() override;
-    void hurt() override;
+    void die(float dt) override;
+    void hurt();
 
     // getters and setters
-    
+    int getDamage() const { return damage_; }
+    void setDamage(int damage) { damage_ = damage; }
+    bool getIsEating() const { return is_eating_; }
+    void setIsEating(bool is_eating) {
+        if (is_eating) {
+            is_eating_ = true;
+            speed_ = 0.0f;
+            frame_count_ = static_cast<int>(zombie_eat_files.size());
+        }else{
+            is_eating_ = false;
+            speed_ = 6.0f;
+            frame_count_ = static_cast<int>(zombie_move_files.size());
+        }
+        frame_timer_ = 0;
+        frame_index_ = 0;
+    }
     SDL_Texture* getTexture() const { return texture_; }
     void setTexture(SDL_Texture* texture) { texture_ = texture; }
     int getFrameIndex() const { return frame_index_; }

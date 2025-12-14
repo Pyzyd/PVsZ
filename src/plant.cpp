@@ -23,6 +23,7 @@ void Plant::init()
 {
     Actor::init();
     o_type_ = ObjectType::PLANT;
+    setPlantHealth(100);
     if (this->p_type_ == PlantType::COUNT || this->p_type_ == PlantType::NONE){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Invalid plant type");
         return;
@@ -51,6 +52,12 @@ void Plant::update(float dt)
         frame_timer_ = 0.0f;
         texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->p_type_][frame_index_].c_str());
     }
+    if (is_hurt_){
+        hurt(dt);
+    }
+    if (is_dead_){
+        die(dt);
+    }
     if (is_attacking_){
         if (attack_timer_ >= attack_interval_){
             attack();
@@ -76,14 +83,46 @@ void Plant::clean()
 
 void Plant::takeDamage(int damage)
 {
+    hurt_damage_ = damage;
+    if (health_ > 0){
+        is_hurt_ = true;
+    }else{
+        is_dead_ = true;
+        is_hurt_ = false;
+    }
 }
 
-void Plant::die()
+void Plant::die(float dt)
 {
+    setActive(false);
+    setAlive(false);
+    setNeedRemove(true);
 }
 
-void Plant::hurt()
+void Plant::hurt(float dt)
 {
+    hurt_timer_ += dt;
+    if (hurt_timer_ > hurt_interval_){
+        health_ -= hurt_damage_;
+        hurt_timer_ = 0.0f;
+    }
+}
+
+void Plant::setPlantHealth(int health)
+{
+    switch(p_type_)
+    {
+    case PlantType::PEA:
+        health_ = 100;
+        break;
+    case PlantType::SUNFLOWER:
+        health_ = 200;
+        break;
+    case PlantType::COUNT:
+    case PlantType::NONE:
+    default:
+        break;
+    }
 }
 
 void Plant::attack()

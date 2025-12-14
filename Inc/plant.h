@@ -30,6 +30,11 @@ class Plant : public Actor
     float attack_timer_ = 0.0f;
     float attack_interval_ = 2.0f;
     bool is_attacking_ = false;
+    int hurt_damage_ = 0;
+    float hurt_timer_ = 0.0f;
+    float hurt_interval_ = 0.5f;
+    bool is_hurt_ = false;
+    bool is_dead_ = false;
 public:
     static Plant *addPlantChild(Object *parent, PlantType type, glm::vec2 pos);
 
@@ -39,8 +44,10 @@ public:
     virtual void clean() override;
 
     void takeDamage(int damage) override;
-    void die() override;
-    void hurt() override;
+    void die(float dt) override;
+    void hurt(float dt);
+
+    void setPlantHealth(int health);
 
     // getters and setters
     bool isAttacking() const { return is_attacking_; }

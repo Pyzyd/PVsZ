@@ -61,6 +61,8 @@ void SceneMain::update(float dt)
     createRandomSunShine(dt);
     createZombie(dt);
     updatePlant();
+    ZombieEatPlant();
+
     if (!is_active_)
     {
         game_.changeScene(new SceneStart());
@@ -275,13 +277,14 @@ void SceneMain::countTotalSunShine()
 void SceneMain::createZombie(float dt)
 {
     zombie_timer_ += dt;
-    if (zombie_timer_ > zombie_interval_)
+    if (zombie_timer_ > zombie_interval_ && zombie_num_ < ZOMBIE_NUM_MAX)
     {
         zombie_timer_ = 0;
         glm::vec2 pos;
         pos.x = game_.getRandomFloat(PLANT_MAP_START_X + PLANT_MAP_WIDTH, PLANT_MAP_START_X + PLANT_MAP_WIDTH + PLANT_MAP_GRID_W);
         pos.y = PLANT_MAP_START_Y + PLANT_MAP_GRID_H / 4.0 + game_.getRandomInt(0, PLANT_MAP_GRID_ROWS - 1) * PLANT_MAP_GRID_H;
         Zombie::addZombieChild(this, pos, posToMapCoor(pos));
+        zombie_num_++;
         zombie_interval_ = game_.getRandomFloat(3.0, 8.0);
     }
 }
@@ -332,9 +335,34 @@ void SceneMain::ZombieTakeDamage(Bullet* bullet)
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
             auto zombie = dynamic_cast<Zombie *>(child);
-            if (!(bullet->isExplosion()) && glm::length(zombie->getPos() - bullet->getPos()) < 20.0f){
+            if (zombie->isAlive() && !(bullet->isExplosion()) && glm::length(zombie->getPos() - bullet->getPos()) < 20.0f){
                 zombie->takeDamage(bullet->getDamage());
                 bullet->setExplosion(true);
+            }
+        }
+    }
+}
+
+void SceneMain::ZombieEatPlant()
+{
+    for (auto &child : children_)
+    {
+        if (child->getObjectType() == ObjectType::ZOMBIE)
+        {
+            auto zombie = dynamic_cast<Zombie *>(child);
+            if (zombie->isAlive()){
+                auto plant = getPlantFromMapCoor(zombie->getCoor());
+                if (plant != nullptr)
+                {
+                    if (plant->isAlive()){
+                        plant->takeDamage(zombie->getDamage());
+                        if(!zombie->getIsEating()){
+                            zombie->setIsEating(true);
+                        }
+                    }else{
+                        zombie->setIsEating(false);
+                    }
+                }
             }
         }
     }

@@ -35,6 +35,8 @@
 #define SUNSHINE_NUM_TEXT_CENTER_X (SUNSHINE_NUM_TEXT_START_X + 20)
 #define SUNSHINE_NUM_TEXT_CENTER_Y (SUNSHINE_NUM_TEXT_START_Y + 16)
 
+#define ZOMBIE_NUM_MAX 10
+
 class Plant;
 class Zombie;
 class SunShine;
@@ -58,6 +60,8 @@ private:
     TTF_Font* font_ = nullptr;
     float zombie_timer_ = 0.0f;
     float zombie_interval_ = 8.0f;
+
+    int zombie_num_ = 0;
 public:
     SceneMain() = default;
     virtual ~SceneMain() = default;
@@ -81,6 +85,7 @@ public:
     void plantAttackZombie();
     void ZombieEmerge();
     void ZombieTakeDamage(Bullet* bullet);
+    void ZombieEatPlant();
     Plant* getPlantFromMapCoor(glm::ivec2 map_coor);
     Zombie* getZombieFromMapCoor(glm::ivec2 map_coor);
 
