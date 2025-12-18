@@ -19,6 +19,7 @@ set(SOURCES
     src/zombie.cpp
     src/bullet.cpp
     src/actor.cpp
+    src/asset_store.cpp
 )
 
 # 设置输出目录

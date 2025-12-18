@@ -1,5 +1,6 @@
 #include "sunshine.h"
 #include "scene_main.h"
+#include "asset_store.h"
 #include <SDL_image.h>
 
 std::vector<std::string> sunshine_file_path;
@@ -24,14 +25,16 @@ void SunShine::init()
 {
     Object::init();
     o_type_ = ObjectType::SUNSHINE;
-    texture_ = IMG_LoadTexture(game_.getRenderer(), sunshine_file_path[frame_index_].c_str());
+    // texture_ = IMG_LoadTexture(game_.getRenderer(), sunshine_file_path[frame_index_].c_str());
+    texture_ = game_.getAssetStore()->getImage(sunshine_file_path[frame_index_]);
     if (!texture_)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", IMG_GetError());
     }
     SDL_QueryTexture(texture_, nullptr, nullptr, &width_, &height_);
     direction_ = glm::normalize(dest_ - pos_);
-    clicked_sound_ = Mix_LoadWAV(SUNSHINE_CLICKED_SOUND);
+    // clicked_sound_ = Mix_LoadWAV(SUNSHINE_CLICKED_SOUND);
+    clicked_sound_ = game_.getAssetStore()->getSound(SUNSHINE_CLICKED_SOUND);
 }
 
 void SunShine::handleEvents(SDL_Event &event)
@@ -67,7 +70,8 @@ void SunShine::update(float dt)
             setNeedRemove(true);
         }
     }
-    texture_ = IMG_LoadTexture(game_.getRenderer(), sunshine_file_path[frame_index_].c_str());
+    // texture_ = IMG_LoadTexture(game_.getRenderer(), sunshine_file_path[frame_index_].c_str());
+    texture_ = game_.getAssetStore()->getImage(sunshine_file_path[frame_index_]);
     if (!texture_)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", IMG_GetError());
@@ -82,18 +86,18 @@ void SunShine::render()
     SDL_RenderCopy(game_.getRenderer(), texture_, nullptr, &rect);
 }
 
-void SunShine::clean()
-{
-    Object::clean();
-    if (texture_)
-    {
-        SDL_DestroyTexture(texture_);
-    }
-    if (clicked_sound_)
-    {
-        Mix_FreeChunk(clicked_sound_);
-    }
-}
+// void SunShine::clean()
+// {
+//     Object::clean();
+//     if (texture_)
+//     {
+//         SDL_DestroyTexture(texture_);
+//     }
+//     if (clicked_sound_)
+//     {
+//         Mix_FreeChunk(clicked_sound_);
+//     }
+// }
 
 void SunShine::clicked(SDL_Event &event)
 {

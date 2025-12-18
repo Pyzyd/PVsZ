@@ -15,9 +15,6 @@ class SunShine : public Object
     glm::vec2 pos_ = glm::vec2(0, 0);
     glm::vec2 dest_ = glm::vec2(0, 0);
     glm::vec2 direction_ = glm::vec2(0, 0);
-    int width_ = 0;
-    int height_ = 0;
-    SDL_Texture* texture_ = nullptr;
     int frame_index_ = 0;
     int frame_count_ = 0;
     float frame_time_ = 0.0f;
@@ -36,7 +33,7 @@ public:
     virtual void handleEvents(SDL_Event &event) override;
     virtual void update(float dt) override;
     virtual void render() override;
-    virtual void clean() override;
+    // virtual void clean() override;
 
     // getters and setters
     bool isCollected() const { return is_collected_; }

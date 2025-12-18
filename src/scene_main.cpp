@@ -4,18 +4,20 @@
 #include "zombie.h"
 #include "bullet.h"
 #include "scene_start.h"
-
+#include "asset_store.h"
 #include <SDL_image.h>
 
 void SceneMain::init()
 {
     Scene::init();
-    background_ = IMG_LoadTexture(game_.getRenderer(), "res/bg.jpg");
+    // background_ = IMG_LoadTexture(game_.getRenderer(), "res/bg.jpg");
+    background_ = game_.getAssetStore()->getImage("res/bg.jpg");
     if (!background_)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", IMG_GetError());
     }
-    top_bar_ = IMG_LoadTexture(game_.getRenderer(), "res/bar5.png");
+    // top_bar_ = IMG_LoadTexture(game_.getRenderer(), "res/bar5.png");
+    top_bar_ = game_.getAssetStore()->getImage("res/bar5.png");
     if (!top_bar_)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", IMG_GetError());

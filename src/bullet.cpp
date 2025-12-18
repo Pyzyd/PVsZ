@@ -1,5 +1,6 @@
 #include "bullet.h"
 #include "zombie.h"
+#include "asset_store.h"
 #include <SDL_image.h>
 
 std::map<PlantType, std::string> bullet_file_path;
@@ -28,7 +29,8 @@ void Bullet::init()
     switch (planttype_)
     {
     case PlantType::PEA:
-        texture_ = IMG_LoadTexture(game_.getRenderer(), bullet_file_path[planttype_].c_str());
+        // texture_ = IMG_LoadTexture(game_.getRenderer(), bullet_file_path[planttype_].c_str());
+        texture_ = game_.getAssetStore()->getImage(bullet_file_path[planttype_]);
         break;
     case PlantType::SUNFLOWER:
     case PlantType::NONE:
@@ -47,7 +49,8 @@ void Bullet::update(float dt)
     pos_ += dir_ * speed_ * dt;
     if (texture_ && is_explosion_){
         speed_ = 0;
-        texture_ = IMG_LoadTexture(game_.getRenderer(), bullet_explosion_file[planttype_].c_str());
+        // texture_ = IMG_LoadTexture(game_.getRenderer(), bullet_explosion_file[planttype_].c_str());
+        texture_ = game_.getAssetStore()->getImage(bullet_explosion_file[planttype_]);
         explosion_timer_ += dt;
     }
     if (explosion_timer_ > explosion_duration_ && (is_explosion_ || pos_.x > game_.getScreenSize().x)){
@@ -64,15 +67,15 @@ void Bullet::render()
     }
 }
 
-void Bullet::clean()
-{
-    Object::clean();
-    if (texture_ != nullptr)
-    {
-        SDL_DestroyTexture(texture_);
-        texture_ = nullptr;
-    }
-}
+// void Bullet::clean()
+// {
+//     Object::clean();
+//     if (texture_ != nullptr)
+//     {
+//         SDL_DestroyTexture(texture_);
+//         texture_ = nullptr;
+//     }
+// }
 
 void Bullet::causeHarm(std::shared_ptr<Zombie> zombie)
 {

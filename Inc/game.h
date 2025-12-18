@@ -4,7 +4,10 @@
 #include <SDL.h>
 #include <glm/glm.hpp>
 #include <string>
+#include <memory>
 #include <random>
+
+class AssetStore;
 
 
 class Scene; // 前向声明
@@ -18,6 +21,7 @@ class Game
     glm::vec2 mouse_pos_ = glm::vec2(0.0f);
 
     std::shared_ptr<Scene> current_scene_ = nullptr; // 当前场景
+    std::shared_ptr<AssetStore> asset_store_ = nullptr; // 资源管理器
 
     SDL_Window* window_ = nullptr;
     SDL_Renderer* renderer_ = nullptr;
@@ -43,6 +47,7 @@ public:
     }
 
     // getters and setters
+    std::shared_ptr<AssetStore> getAssetStore() const { return asset_store_; }
     glm::vec2 getScreenSize() const { return screen_size_; } // 获取屏幕大小
     SDL_Renderer* getRenderer() const { return renderer_; } // 获取渲染器
     glm::vec2 getMousePos() const { return mouse_pos_; } // 获取鼠标位置

@@ -1,5 +1,6 @@
 #include "zombie.h"
 #include "scene_main.h"
+#include "asset_store.h"
 #include <SDL_image.h>
 
 std::vector<std::string> zombie_move_files;
@@ -41,7 +42,8 @@ void Zombie::init()
     Actor::init();
     o_type_ = ObjectType::ZOMBIE;
     health_ = 100;
-    texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_move_files[frame_index_].c_str());
+    // texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_move_files[frame_index_].c_str());
+    texture_ = game_.getAssetStore()->getImage(zombie_move_files[frame_index_]);
     if (!texture_)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", SDL_GetError());
@@ -83,15 +85,15 @@ void Zombie::render()
     SDL_RenderCopy(game_.getRenderer(), texture_, nullptr, &rect);
 }
 
-void Zombie::clean()
-{
-    Actor::clean();
-    if (texture_)
-    {
-        SDL_DestroyTexture(texture_);
-        texture_ = nullptr;
-    }
-}
+// void Zombie::clean()
+// {
+//     Actor::clean();
+//     if (texture_)
+//     {
+//         SDL_DestroyTexture(texture_);
+//         texture_ = nullptr;
+//     }
+// }
 
 void Zombie::move(float dt)
 {
@@ -104,7 +106,8 @@ void Zombie::move(float dt)
         {
             frame_index_ = 0;
         }
-        texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_move_files[frame_index_].c_str());
+        // texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_move_files[frame_index_].c_str());
+        texture_ = game_.getAssetStore()->getImage(zombie_move_files[frame_index_]);
         if (!texture_)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", SDL_GetError());
@@ -123,7 +126,8 @@ void Zombie::eat(float dt)
         {
             frame_index_ = 0;
         }
-        texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_eat_files[frame_index_].c_str());
+        // texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_eat_files[frame_index_].c_str());
+        texture_ = game_.getAssetStore()->getImage(zombie_eat_files[frame_index_]);
         if (!texture_)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", SDL_GetError());
@@ -157,7 +161,8 @@ void Zombie::die(float dt)
             setNeedRemove(true);
             return;
         }
-        texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_die_files[frame_index_].c_str());
+        // texture_ = IMG_LoadTexture(game_.getRenderer(), zombie_die_files[frame_index_].c_str());
+        texture_ = game_.getAssetStore()->getImage(zombie_die_files[frame_index_]);
         if (!texture_)
         {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", SDL_GetError());

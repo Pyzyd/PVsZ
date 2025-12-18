@@ -1,21 +1,24 @@
 #include "scene_start.h"
 #include "scene_main.h"
-
+#include "asset_store.h"
 #include <SDL_image.h>
 
 
 void SceneStart::init()
 {
     Scene::init();
-    background_ = IMG_LoadTexture(game_.getRenderer(), "res/menu.png");
+    // background_ = IMG_LoadTexture(game_.getRenderer(), "res/menu.png");
+    background_ = game_.getAssetStore()->getImage("res/menu.png");
     if (!background_) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", IMG_GetError());
     }
-    menu1_ = IMG_LoadTexture(game_.getRenderer(), "res/menu1.png");
+    // menu1_ = IMG_LoadTexture(game_.getRenderer(), "res/menu1.png");
+    menu1_ = game_.getAssetStore()->getImage("res/menu1.png");
     if (!menu1_) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", IMG_GetError());
     }
-    menu2_ = IMG_LoadTexture(game_.getRenderer(), "res/menu2.png");
+    // menu2_ = IMG_LoadTexture(game_.getRenderer(), "res/menu2.png");
+    menu2_ = game_.getAssetStore()->getImage("res/menu2.png");
     if (!menu2_) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", IMG_GetError());
     }

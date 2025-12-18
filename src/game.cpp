@@ -1,6 +1,7 @@
 #include "game.h"
 #include "scene_main.h"
 #include "scene_start.h"
+#include "asset_store.h"
 
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -72,6 +73,9 @@ void Game::init(std::string title, int width, int height)
     SDL_SetWindowTitle(window_, title.c_str());
     SDL_RenderSetLogicalSize(renderer_, width, height);
     SDL_RenderSetIntegerScale(renderer_, SDL_FALSE);  // 允许非整数缩放
+
+    asset_store_ = std::make_shared<AssetStore>(renderer_);
+
     is_running_ = true;
     dt_ = 0.0f;
     frame_delay_ = 1000.0f / FPS_;
@@ -128,6 +132,11 @@ void Game::clean()
     {
         SDL_DestroyRenderer(renderer_);
         renderer_ = nullptr;
+    }
+    if (asset_store_){
+        asset_store_->clean();
+        // delete asset_store_;
+        asset_store_ = nullptr;
     }
     if (window_)
     {

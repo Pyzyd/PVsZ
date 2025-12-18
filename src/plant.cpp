@@ -1,6 +1,7 @@
 #include "plant.h"
 #include "scene_main.h"
 #include "bullet.h"
+#include "asset_store.h"
 #include <SDL_image.h>
 
 std::map<PlantType, std::string> card_file_path;
@@ -28,7 +29,8 @@ void Plant::init()
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Invalid plant type");
         return;
     }
-    texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->p_type_][frame_index_].c_str());
+    // texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->p_type_][frame_index_].c_str());
+    texture_ = game_.getAssetStore()->getImage(plant_file_path[this->p_type_][frame_index_]);
     if (texture_ == nullptr){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", SDL_GetError());
         return;
@@ -50,7 +52,8 @@ void Plant::update(float dt)
             frame_index_ = 0;
         }
         frame_timer_ = 0.0f;
-        texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->p_type_][frame_index_].c_str());
+        // texture_ = IMG_LoadTexture(game_.getRenderer() , plant_file_path[this->p_type_][frame_index_].c_str());
+        texture_ = game_.getAssetStore()->getImage(plant_file_path[this->p_type_][frame_index_]);
     }
     if (is_hurt_){
         hurt(dt);
@@ -73,13 +76,13 @@ void Plant::render()
     Actor::render();
 }
 
-void Plant::clean()
-{
-    Actor::clean();
-    if (texture_ != nullptr){
-        SDL_DestroyTexture(texture_);
-    }
-}
+// void Plant::clean()
+// {
+//     Actor::clean();
+//     if (texture_ != nullptr){
+//         SDL_DestroyTexture(texture_);
+//     }
+// }
 
 void Plant::takeDamage(int damage)
 {
@@ -179,7 +182,8 @@ void Card::init()
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Invalid plant type");
         return;
     }
-    texture_ = IMG_LoadTexture(game_.getRenderer() , card_file_path[this->p_type_].c_str());
+    // texture_ = IMG_LoadTexture(game_.getRenderer() , card_file_path[this->p_type_].c_str());
+    texture_ = game_.getAssetStore()->getImage(card_file_path[this->p_type_]);
     if (texture_ == nullptr){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", SDL_GetError());
         return;
@@ -200,10 +204,10 @@ void Card::render()
     SDL_RenderCopyF(game_.getRenderer(), texture_, nullptr, &dst);
 }
 
-void Card::clean()
-{
-    Object::clean();
-    if (texture_ != nullptr){
-        SDL_DestroyTexture(texture_);
-    }
-}
+// void Card::clean()
+// {
+//     Object::clean();
+//     if (texture_ != nullptr){
+//         SDL_DestroyTexture(texture_);
+//     }
+// }

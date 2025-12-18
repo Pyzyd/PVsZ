@@ -30,7 +30,7 @@ public:
     virtual void handleEvents(SDL_Event& event) override;
     virtual void update(float dt) override;
     virtual void render() override;
-    virtual void clean() override;
+    // virtual void clean() override;
 
     void move(float dt);
     void eat(float dt);

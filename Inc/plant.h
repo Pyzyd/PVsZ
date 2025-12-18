@@ -41,7 +41,7 @@ public:
     virtual void init() override;
     virtual void update(float dt) override;
     virtual void render() override;
-    virtual void clean() override;
+    // virtual void clean() override;
 
     void takeDamage(int damage) override;
     void die(float dt) override;
@@ -77,7 +77,7 @@ public:
     virtual void init() override;
     virtual void update(float dt) override;
     virtual void render() override;
-    virtual void clean() override;
+    // virtual void clean() override;
     // getters and setters
     PlantType getPlantType() const { return p_type_; }
     glm::vec2 getPos() const { return pos_; }
