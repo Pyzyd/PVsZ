@@ -23,17 +23,4 @@ void Scene::render()
 void Scene::clean()
 {
     Object::clean();
-    if (!background_)
-    {
-        SDL_DestroyTexture(background_);
-        background_ = nullptr;
-    }
-    if (!objects_.empty())
-    {
-        for (auto &object : objects_)
-        {
-            object->clean();
-        }
-        objects_.clear();
-    }
 }

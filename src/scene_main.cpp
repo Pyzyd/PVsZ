@@ -51,7 +51,7 @@ void SceneMain::handleEvents(SDL_Event &event)
         if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
         {
             auto scene = std::make_shared<SceneStart>();
-            game_.changeScene(scene);
+            game_.changeScene(std::move(scene));
         }
     }
     userClickedCard(event);
@@ -67,7 +67,8 @@ void SceneMain::update(float dt)
 
     if (!is_active_)
     {
-        game_.changeScene(std::make_shared<SceneStart>());
+        auto scene = std::make_shared<SceneStart>();
+        game_.changeScene(std::move(scene));
     }
 }
 
@@ -82,26 +83,6 @@ void SceneMain::render()
 void SceneMain::clean()
 {
     Scene::clean();
-    if (!background_)
-    {
-        SDL_DestroyTexture(background_);
-        background_ = nullptr;
-    }
-    if (!top_bar_)
-    {
-        SDL_DestroyTexture(top_bar_);
-        top_bar_ = nullptr;
-    }
-    if (clicked_card_plant_ != nullptr)
-    {
-        clicked_card_plant_->setNeedRemove(true);
-        clicked_card_plant_ = nullptr;
-    }
-    if (font_)
-    {
-        TTF_CloseFont(font_);
-        font_ = nullptr;
-    }
 }
 
 void SceneMain::renderTopBar()

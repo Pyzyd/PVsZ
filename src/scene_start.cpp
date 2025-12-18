@@ -46,15 +46,6 @@ void SceneStart::render()
 void SceneStart::clean()
 {
     Scene::clean();
-    if (background_) {
-        SDL_DestroyTexture(background_);
-    }
-    if (menu1_) {
-        SDL_DestroyTexture(menu1_);
-    }
-    if (menu2_) {
-        SDL_DestroyTexture(menu2_);
-    }
 }
 
 void SceneStart::renderMenu(SDL_Texture* menu, int x, int y)
@@ -78,7 +69,7 @@ void SceneStart::menuClicked(SDL_Event &event)
             event.button.y > MENU1_START_Y && event.button.y < MENU1_START_Y + MENU1_HEIGHT) {
             // menu1 up
             auto scene_main = std::make_shared<SceneMain>();
-            game_.changeScene(scene_main);
+            game_.changeScene(std::move(scene_main));
         }
     }
 }
