@@ -79,7 +79,7 @@ void Zombie::update(float dt)
 void Zombie::render()
 {
     Actor::render();
-    SDL_Rect rect = {static_cast<int>(pos_.x - width_ / 2.0f), static_cast<int>(pos_.y - height_ / 2.0f), width_, height_};
+    SDL_Rect rect = {static_cast<int>(pos_.x - width_* 3.0f / 4.0f), static_cast<int>(pos_.y - height_ / 2.0f), width_, height_};
     SDL_RenderCopy(game_.getRenderer(), texture_, nullptr, &rect);
 }
 

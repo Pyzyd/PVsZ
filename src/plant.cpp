@@ -116,7 +116,7 @@ void Plant::setPlantHealth(int health)
         health_ = 100;
         break;
     case PlantType::SUNFLOWER:
-        health_ = 200;
+        health_ = 125;
         break;
     case PlantType::COUNT:
     case PlantType::NONE:
@@ -130,7 +130,7 @@ void Plant::attack()
     switch (p_type_)
     {
     case PlantType::PEA:
-        Bullet::addBulletChild(this, PlantType::PEA, glm::vec2(pos_.x + width_ / 2.0, pos_.y - height_ / 4.0));
+        Bullet::addBulletChild(this->parent_, PlantType::PEA, glm::vec2(pos_.x + width_ / 2.0, pos_.y - height_ / 4.0));
         break;
     
     case PlantType::SUNFLOWER:

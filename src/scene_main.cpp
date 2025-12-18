@@ -61,7 +61,7 @@ void SceneMain::update(float dt)
     createRandomSunShine(dt);
     createZombie(dt);
     updatePlant();
-    ZombieEatPlant();
+    updateZombie();
 
     if (!is_active_)
     {
@@ -132,25 +132,37 @@ void SceneMain::updatePlant()
     plantAttackZombie();
     for (auto &child : children_)
     {
-        if (child->getObjectType() == ObjectType::PLANT)
+        if (child->getObjectType() == ObjectType::PLANT_BULLET)
         {
-            auto plant = dynamic_cast<Plant *>(child);
-            if (plant != nullptr)
+            auto bullet = dynamic_cast<Bullet *>(child);
+            if (bullet != nullptr)
             {
-                for (auto &child : plant->getChildren())
+                ZombieTakeDamage(bullet);
+            }
+        }
+    }
+}
+
+void SceneMain::updateZombie()
+{
+    ZombieEatPlant();
+    int count = 0;
+    for (auto &child : children_)
+    {
+        if (child->getObjectType() == ObjectType::ZOMBIE)
+        {
+            auto zombie = dynamic_cast<Zombie *>(child);
+            if (zombie != nullptr)
+            {
+                if (zombie->getCoor().x >= 0 && zombie->getCoor().x <= PLANT_MAP_WIDTH &&
+                    zombie->getCoor().y >= 0 && zombie->getCoor().y <= PLANT_MAP_HEIGHT)
                 {
-                    if (child->getObjectType() == ObjectType::PLANT_BULLET)
-                    {
-                        auto bullet = dynamic_cast<Bullet *>(child);
-                        if (bullet != nullptr)
-                        {
-                            ZombieTakeDamage(bullet);
-                        }
-                    }
+                    count++;
                 }
             }
         }
     }
+    zombie_num_ = count;
 }
 
 void SceneMain::userClickedCard(SDL_Event &event)
@@ -284,58 +296,82 @@ void SceneMain::createZombie(float dt)
         pos.x = game_.getRandomFloat(PLANT_MAP_START_X + PLANT_MAP_WIDTH, PLANT_MAP_START_X + PLANT_MAP_WIDTH + PLANT_MAP_GRID_W);
         pos.y = PLANT_MAP_START_Y + PLANT_MAP_GRID_H / 4.0 + game_.getRandomInt(0, PLANT_MAP_GRID_ROWS - 1) * PLANT_MAP_GRID_H;
         Zombie::addZombieChild(this, pos, posToMapCoor(pos));
-        zombie_num_++;
         zombie_interval_ = game_.getRandomFloat(3.0, 8.0);
     }
 }
 
 void SceneMain::plantAttackZombie()
 {
-    ZombieEmerge();
-    for (int i = 0; i < PLANT_MAP_GRID_ROWS; i++)
-    {
-        if (has_zombie_[i])
-        {
-            for (int j = 0; j < PLANT_MAP_GRID_COLS; j++)
-            {
-                if (plant_map_[i][j])
-                {
-                    auto plant = getPlantFromMapCoor(glm::ivec2(j, i));
-                    if (plant != nullptr)
-                    {
-                        plant->setIsAttacking(true);
-                    }
-                }
-            }
-        }
-    }
-}
-
-void SceneMain::ZombieEmerge()
-{
+    // ZombieEmerge();
+    // for (int i = 0; i < PLANT_MAP_GRID_ROWS; i++)
+    // {
+    //     if (has_zombie_[i])
+    //     {
+    //         for (int j = 0; j < PLANT_MAP_GRID_COLS; j++)
+    //         {
+    //             if (plant_map_[i][j])
+    //             {
+    //                 auto plant = getPlantFromMapCoor(glm::ivec2(j, i));
+    //                 if (plant != nullptr)
+    //                 {
+    //                     plant->setIsAttacking(true);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
     for (int i = 0; i < PLANT_MAP_GRID_ROWS; i++)
     {
         for (int j = 0; j < PLANT_MAP_GRID_COLS; j++)
         {
-            auto zombie = getZombieFromMapCoor(glm::ivec2(j, i));
-            if (zombie != nullptr)
+            if (plant_map_[i][j])
             {
-                has_zombie_[i] = true;
-                break;
+                auto plant = getPlantFromMapCoor(glm::ivec2(j, i));
+                bool is_attacking = false;
+                for (auto &child : children_)
+                {
+                    if (child->getObjectType() == ObjectType::ZOMBIE)
+                    {
+                        auto zombie = dynamic_cast<Zombie *>(child);
+                        if (zombie->getCoor().x >= j && zombie->getCoor().y == i)
+                        {
+                            is_attacking = true;
+                            break;
+                        }
+                    }
+                }
+                plant->setIsAttacking(is_attacking);
             }
-            has_zombie_[i] = false;
         }
     }
 }
 
-void SceneMain::ZombieTakeDamage(Bullet* bullet)
+// void SceneMain::ZombieEmerge()
+// {
+//     for (int i = 0; i < PLANT_MAP_GRID_ROWS; i++)
+//     {
+//         for (int j = 0; j < PLANT_MAP_GRID_COLS; j++)
+//         {
+//             auto zombie = getZombieFromMapCoor(glm::ivec2(j, i));
+//             if (zombie != nullptr)
+//             {
+//                 has_zombie_[i] = true;
+//                 break;
+//             }
+//             has_zombie_[i] = false;
+//         }
+//     }
+// }
+
+void SceneMain::ZombieTakeDamage(Bullet *bullet)
 {
     for (auto &child : children_)
     {
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
             auto zombie = dynamic_cast<Zombie *>(child);
-            if (zombie->isAlive() && !(bullet->isExplosion()) && glm::length(zombie->getPos() - bullet->getPos()) < 20.0f){
+            if (zombie->isAlive() && !(bullet->isExplosion()) && glm::length(zombie->getPos() - bullet->getPos()) < zombie->getWidth() * 0.4f)
+            {
                 zombie->takeDamage(bullet->getDamage());
                 bullet->setExplosion(true);
             }
@@ -350,17 +386,23 @@ void SceneMain::ZombieEatPlant()
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
             auto zombie = dynamic_cast<Zombie *>(child);
-            if (zombie->isAlive()){
+            if (zombie->isAlive())
+            {
                 auto plant = getPlantFromMapCoor(zombie->getCoor());
                 if (plant != nullptr)
                 {
-                    if (plant->isAlive()){
+                    if (plant->isAlive())
+                    {
                         plant->takeDamage(zombie->getDamage());
-                        if(!zombie->getIsEating()){
+                        if (!zombie->getIsEating())
+                        {
                             zombie->setIsEating(true);
                         }
-                    }else{
+                    }
+                    else
+                    {
                         zombie->setIsEating(false);
+                        plant_map_[plant->getCoor().y][plant->getCoor().x] = false;
                     }
                 }
             }
@@ -400,11 +442,14 @@ Zombie *SceneMain::getZombieFromMapCoor(glm::ivec2 map_coor)
     return nullptr;
 }
 
-
 glm::ivec2 SceneMain::posToMapCoor(glm::vec2 pos)
 {
     glm::ivec2 coor;
     coor.x = (pos.x - PLANT_MAP_START_X) / PLANT_MAP_GRID_W;
     coor.y = (pos.y - PLANT_MAP_START_Y) / PLANT_MAP_GRID_H;
+    if (coor.x < 0 || coor.x >= PLANT_MAP_GRID_COLS || coor.y < 0 || coor.y >= PLANT_MAP_GRID_ROWS)
+    {
+        return glm::ivec2(-1, -1);
+    }
     return coor;
 }

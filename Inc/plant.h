@@ -28,7 +28,7 @@ class Plant : public Actor
     int fps_ = 15;
     float frame_timer_ = 0.0f;
     float attack_timer_ = 0.0f;
-    float attack_interval_ = 2.0f;
+    float attack_interval_ = 3.0f;
     bool is_attacking_ = false;
     int hurt_damage_ = 0;
     float hurt_timer_ = 0.0f;

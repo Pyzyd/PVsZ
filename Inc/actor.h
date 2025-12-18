@@ -19,7 +19,7 @@ public:
     bool isAlive() const { return alive_; }
     void setAlive(bool alive) { alive_ = alive; }
     glm::ivec2 getCoor() const { return coor_; }
-    void setCoor(glm::ivec2 coord) { coor_ = coord; }
+    void setCoor(glm::ivec2 coor) { coor_ = coor; }
     glm::vec2 getPos() const { return pos_; }
     void setPos(glm::vec2 pos) { pos_ = pos; }
 

@@ -35,7 +35,7 @@
 #define SUNSHINE_NUM_TEXT_CENTER_X (SUNSHINE_NUM_TEXT_START_X + 20)
 #define SUNSHINE_NUM_TEXT_CENTER_Y (SUNSHINE_NUM_TEXT_START_Y + 16)
 
-#define ZOMBIE_NUM_MAX 10
+#define ZOMBIE_NUM_MAX 8
 
 class Plant;
 class Zombie;
@@ -76,6 +76,7 @@ public:
     void renderSunShineNum();
 
     void updatePlant();
+    void updateZombie();
 
     void userClickedCard(SDL_Event &event);
     void setClickedCardPlant(int index);
@@ -83,7 +84,7 @@ public:
     void countTotalSunShine();
     void createZombie(float dt);
     void plantAttackZombie();
-    void ZombieEmerge();
+    // void ZombieEmerge();
     void ZombieTakeDamage(Bullet* bullet);
     void ZombieEatPlant();
     Plant* getPlantFromMapCoor(glm::ivec2 map_coor);

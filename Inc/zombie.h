@@ -11,6 +11,8 @@ extern std::vector<std::string> zombie_die_files;
 extern std::vector<std::string> zombie_eat_files;
 void initZombieFilePath();
 
+#define ZOMBIE_SPEED 10.0f
+
 class Zombie : public Actor
 {
     int frame_index_ = 0;
@@ -18,7 +20,7 @@ class Zombie : public Actor
     float frame_timer_ = 0.0f;
     float frame_delay_ = 0.1f;
     int fps_ = 10;
-    float speed_ = 6.0f;
+    float speed_ = ZOMBIE_SPEED;
     bool is_eating_ = false;
     int damage_ = 10;
 public:
@@ -48,7 +50,7 @@ public:
             frame_count_ = static_cast<int>(zombie_eat_files.size());
         }else{
             is_eating_ = false;
-            speed_ = 6.0f;
+            speed_ = ZOMBIE_SPEED;
             frame_count_ = static_cast<int>(zombie_move_files.size());
         }
         frame_timer_ = 0;
