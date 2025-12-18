@@ -48,7 +48,7 @@ private:
     SDL_Texture* top_bar_;
     bool card_clicked_ = false;
     int card_num_ = 0;
-    Plant* clicked_card_plant_ = nullptr;
+    std::shared_ptr<Plant> clicked_card_plant_ = nullptr;
     float sunshine_timer_ = 0.0f;
     float sunshine_interval_ = 5.0f;
     int sunshine_num_ = 0;
@@ -85,10 +85,10 @@ public:
     void createZombie(float dt);
     void plantAttackZombie();
     // void ZombieEmerge();
-    void ZombieTakeDamage(Bullet* bullet);
+    void ZombieTakeDamage(std::shared_ptr<Bullet> bullet);
     void ZombieEatPlant();
-    Plant* getPlantFromMapCoor(glm::ivec2 map_coor);
-    Zombie* getZombieFromMapCoor(glm::ivec2 map_coor);
+    std::shared_ptr<Plant> getPlantFromMapCoor(glm::ivec2 map_coor);
+    std::shared_ptr<Zombie> getZombieFromMapCoor(glm::ivec2 map_coor);
 
 
     glm::vec2 getSunshineCollectorPos() { return sunshine_collector_pos_; }

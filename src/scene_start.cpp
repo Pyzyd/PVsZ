@@ -74,7 +74,7 @@ void SceneStart::menuClicked(SDL_Event &event)
         if (event.button.x > MENU1_START_X && event.button.x < MENU1_START_X + MENU1_WIDTH &&
             event.button.y > MENU1_START_Y && event.button.y < MENU1_START_Y + MENU1_HEIGHT) {
             // menu1 up
-            auto scene_main = new SceneMain();
+            auto scene_main = std::make_shared<SceneMain>();
             game_.changeScene(scene_main);
         }
     }

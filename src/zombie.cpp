@@ -21,9 +21,9 @@ void initZombieFilePath()
     }
 }
 
-Zombie* Zombie::addZombieChild(Object* parent, glm::vec2 pos, glm::ivec2 coor, float speed)
+std::shared_ptr<Zombie> Zombie::addZombieChild(std::shared_ptr<Object> parent, glm::vec2 pos, glm::ivec2 coor, float speed)
 {
-    Zombie* zombie = new Zombie();
+    std::shared_ptr<Zombie> zombie = std::make_shared<Zombie>();
     zombie->setPos(pos);
     zombie->setCoor(coor);
     zombie->setSpeed(speed);

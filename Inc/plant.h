@@ -36,7 +36,7 @@ class Plant : public Actor
     bool is_hurt_ = false;
     bool is_dead_ = false;
 public:
-    static Plant* addPlantChild(Object* parent, PlantType type, glm::vec2 pos);
+    static std::shared_ptr<Plant> addPlantChild(std::shared_ptr<Object> parent, PlantType type, glm::vec2 pos);
 
     virtual void init() override;
     virtual void update(float dt) override;
@@ -72,7 +72,7 @@ class Card : public Object
     
 
 public:
-    static Card* addCardChild(Object* parent, PlantType type, glm::vec2 pos);
+    static std::shared_ptr<Card> addCardChild(std::shared_ptr<Object> parent, PlantType type, glm::vec2 pos);
 
     virtual void init() override;
     virtual void update(float dt) override;

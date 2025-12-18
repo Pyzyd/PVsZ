@@ -9,7 +9,7 @@ class Scene : public Object
 {
 protected:
     SDL_Texture* background_;
-    std::vector<Object*> objects_;
+    std::vector<std::shared_ptr<Object>> objects_;
 public:
     Scene() = default;
     virtual ~Scene() = default;

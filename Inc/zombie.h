@@ -24,7 +24,7 @@ class Zombie : public Actor
     bool is_eating_ = false;
     int damage_ = 10;
 public:
-    static Zombie* addZombieChild(Object* parent, glm::vec2 pos, glm::ivec2 coor, float speed = 10.0f);
+    static std::shared_ptr<Zombie> addZombieChild(std::shared_ptr<Object> parent, glm::vec2 pos, glm::ivec2 coor, float speed = 10.0f);
 
     virtual void init() override;
     virtual void handleEvents(SDL_Event& event) override;

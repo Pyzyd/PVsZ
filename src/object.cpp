@@ -26,7 +26,7 @@ void Object::update(float dt)
         {
             it = children_.erase(it);
             child->clean();
-            delete child;
+            // delete child;
             child = nullptr;
         }
         else
@@ -62,7 +62,7 @@ void Object::clean()
 
 void Object::sortChildren()
 {
-    children_.sort([](Object* a, Object* b){ return a->getObjectType() < b->getObjectType(); });
+    children_.sort([](std::shared_ptr<Object> a, std::shared_ptr<Object> b){ return a->getObjectType() < b->getObjectType(); });
 }
 
 bool fileExists(std::string path)

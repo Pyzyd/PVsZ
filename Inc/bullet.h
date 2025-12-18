@@ -25,7 +25,7 @@ class Bullet : public Object
     float explosion_duration_ = 0.15f;
 public:
 
-    static Bullet* addBulletChild(Object* parent, PlantType planttype, glm::vec2 pos, glm::vec2 dir = glm::vec2(1, 0), float speed = 240.0f);
+    static std::shared_ptr<Bullet> addBulletChild(std::shared_ptr<Object> parent, PlantType planttype, glm::vec2 pos, glm::vec2 dir = glm::vec2(1, 0), float speed = 240.0f);
 
     virtual void init() override;
     virtual void update(float dt) override;
@@ -46,7 +46,7 @@ public:
     void setDamage(int damage) { damage_ = damage; }
     void setPlantType(PlantType planttype) { planttype_ = planttype; }
 
-    void causeHarm(Zombie* zombie);
+    void causeHarm(std::shared_ptr<Zombie> zombie);
 };
 
 

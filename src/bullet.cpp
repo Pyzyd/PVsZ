@@ -5,9 +5,9 @@
 std::map<PlantType, std::string> bullet_file_path;
 std::map<PlantType, std::string> bullet_explosion_file;
 
-Bullet* Bullet::addBulletChild(Object* parent, PlantType planttype, glm::vec2 pos,glm::vec2 dir, float speed)
+std::shared_ptr<Bullet> Bullet::addBulletChild(std::shared_ptr<Object> parent, PlantType planttype, glm::vec2 pos,glm::vec2 dir, float speed)
 {
-    Bullet* bullet = new Bullet();
+    std::shared_ptr<Bullet> bullet = std::make_shared<Bullet>();
     bullet->setPlantType(planttype);
     bullet->setPos(pos);
     bullet->setDir(dir);
@@ -74,7 +74,7 @@ void Bullet::clean()
     }
 }
 
-void Bullet::causeHarm(Zombie *zombie)
+void Bullet::causeHarm(std::shared_ptr<Zombie> zombie)
 {
     if (zombie->getActive()){
         zombie->takeDamage(damage_);

@@ -27,7 +27,7 @@ void SceneMain::init()
     card_num_ = (TOP_BAR_CARD_NUM > static_cast<int>(PlantType::COUNT) ? static_cast<int>(PlantType::COUNT) : TOP_BAR_CARD_NUM);
     for (int i = 0; i < card_num_; ++i)
     {
-        Card::addCardChild(this, static_cast<PlantType>(i), glm::vec2(TOP_BAR_CARD_START_X + i * TOP_BAR_CARD_INTERVAL, TOP_BAR_CARD_START_Y));
+        Card::addCardChild(shared_from_this(), static_cast<PlantType>(i), glm::vec2(TOP_BAR_CARD_START_X + i * TOP_BAR_CARD_INTERVAL, TOP_BAR_CARD_START_Y));
     }
     for (auto &row : plant_map_)
     {
@@ -48,7 +48,7 @@ void SceneMain::handleEvents(SDL_Event &event)
     {
         if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
         {
-            auto scene = new SceneStart();
+            auto scene = std::make_shared<SceneStart>();
             game_.changeScene(scene);
         }
     }
@@ -65,7 +65,7 @@ void SceneMain::update(float dt)
 
     if (!is_active_)
     {
-        game_.changeScene(new SceneStart());
+        game_.changeScene(std::make_shared<SceneStart>());
     }
 }
 
@@ -134,7 +134,8 @@ void SceneMain::updatePlant()
     {
         if (child->getObjectType() == ObjectType::PLANT_BULLET)
         {
-            auto bullet = dynamic_cast<Bullet* >(child);
+            
+            auto bullet = std::dynamic_pointer_cast<Bullet>(child);
             if (bullet != nullptr)
             {
                 ZombieTakeDamage(bullet);
@@ -151,7 +152,7 @@ void SceneMain::updateZombie()
     {
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
-            auto zombie = dynamic_cast<Zombie* >(child);
+            auto zombie = std::dynamic_pointer_cast<Zombie>(child);
             if (zombie != nullptr)
             {
                 if (zombie->getCoor().x >= 0 && zombie->getCoor().x <= PLANT_MAP_WIDTH &&
@@ -236,10 +237,10 @@ void SceneMain::setClickedCardPlant(int index)
         {
             if (child->getObjectType() == ObjectType::CARD)
             {
-                auto card = dynamic_cast<Card* >(child);
+                auto card = std::dynamic_pointer_cast<Card>(child);
                 if (card->getBarIndex() == index)
                 {
-                    clicked_card_plant_ = Plant::addPlantChild(this, card->getPlantType(), game_.getMousePos());
+                    clicked_card_plant_ = Plant::addPlantChild(shared_from_this(), card->getPlantType(), game_.getMousePos());
                     break;
                 }
             }
@@ -257,7 +258,7 @@ void SceneMain::createRandomSunShine(float dt)
             glm::vec2 pos;
             pos.x = game_.getRandomFloat(PLANT_MAP_START_X, PLANT_MAP_START_X + PLANT_MAP_WIDTH);
             pos.y = game_.getRandomFloat(-TOP_BAR_CARD_HEIGHT, TOP_BAR_START_Y);
-            SunShine::addSunshineChild(this, pos, glm::vec2(pos.x, game_.getRandomFloat(PLANT_MAP_START_Y, PLANT_MAP_START_Y + PLANT_MAP_HEIGHT)));
+            SunShine::addSunshineChild(shared_from_this(), pos, glm::vec2(pos.x, game_.getRandomFloat(PLANT_MAP_START_Y, PLANT_MAP_START_Y + PLANT_MAP_HEIGHT)));
             sunshine_num_++;
             sunshine_timer_ = 0;
         }
@@ -270,7 +271,7 @@ void SceneMain::countTotalSunShine()
     // {
     //     if (child->getObjectType() == ObjectType::SUNSHINE)
     //     {
-    //         auto sunshine = dynamic_cast<SunShine* >(child);
+    //         auto sunshine = std::dynamic_pointer_cast<std::shared_ptr<SunShine> >(child);
     //         if (sunshine->isClicked() && !sunshine->isCollected()){
     //             sunshine->setClicked(false);
     //             total_sunshine_num_++;
@@ -295,7 +296,7 @@ void SceneMain::createZombie(float dt)
         glm::vec2 pos;
         pos.x = game_.getRandomFloat(PLANT_MAP_START_X + PLANT_MAP_WIDTH, PLANT_MAP_START_X + PLANT_MAP_WIDTH + PLANT_MAP_GRID_W);
         pos.y = PLANT_MAP_START_Y + PLANT_MAP_GRID_H / 4.0 + game_.getRandomInt(0, PLANT_MAP_GRID_ROWS - 1) * PLANT_MAP_GRID_H;
-        Zombie::addZombieChild(this, pos, posToMapCoor(pos));
+        Zombie::addZombieChild(shared_from_this(), pos, posToMapCoor(pos));
         zombie_interval_ = game_.getRandomFloat(3.0, 8.0);
     }
 }
@@ -332,7 +333,7 @@ void SceneMain::plantAttackZombie()
                 {
                     if (child->getObjectType() == ObjectType::ZOMBIE)
                     {
-                        auto zombie = dynamic_cast<Zombie* >(child);
+                        auto zombie = std::dynamic_pointer_cast<Zombie>(child);
                         if (zombie->getCoor().x >= j && zombie->getCoor().y == i)
                         {
                             is_attacking = true;
@@ -363,13 +364,13 @@ void SceneMain::plantAttackZombie()
 //     }
 // }
 
-void SceneMain::ZombieTakeDamage(Bullet* bullet)
+void SceneMain::ZombieTakeDamage(std::shared_ptr<Bullet> bullet)
 {
     for (auto &child : children_)
     {
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
-            auto zombie = dynamic_cast<Zombie* >(child);
+            auto zombie = std::dynamic_pointer_cast<Zombie>(child);
             if (zombie->isAlive() && !(bullet->isExplosion()) && glm::length(zombie->getPos() - bullet->getPos()) < zombie->getWidth() * 0.4f)
             {
                 zombie->takeDamage(bullet->getDamage());
@@ -385,7 +386,7 @@ void SceneMain::ZombieEatPlant()
     {
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
-            auto zombie = dynamic_cast<Zombie*>(child);
+            auto zombie = std::dynamic_pointer_cast<Zombie>(child);
             if (zombie->isAlive())
             {
                 auto plant = getPlantFromMapCoor(zombie->getCoor());
@@ -410,13 +411,13 @@ void SceneMain::ZombieEatPlant()
     }
 }
 
-Plant* SceneMain::getPlantFromMapCoor(glm::ivec2 map_coor)
+std::shared_ptr<Plant> SceneMain::getPlantFromMapCoor(glm::ivec2 map_coor)
 {
     for (auto &child : children_)
     {
         if (child->getObjectType() == ObjectType::PLANT)
         {
-            auto plant = dynamic_cast<Plant*>(child);
+            auto plant = std::dynamic_pointer_cast<Plant>(child);
             if (plant->getCoor() == map_coor)
             {
                 return plant;
@@ -426,13 +427,13 @@ Plant* SceneMain::getPlantFromMapCoor(glm::ivec2 map_coor)
     return nullptr;
 }
 
-Zombie* SceneMain::getZombieFromMapCoor(glm::ivec2 map_coor)
+std::shared_ptr<Zombie> SceneMain::getZombieFromMapCoor(glm::ivec2 map_coor)
 {
     for (auto &child : children_)
     {
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
-            auto zombie = dynamic_cast<Zombie*>(child);
+            auto zombie = std::dynamic_pointer_cast<Zombie>(child);
             if (zombie->getCoor() == map_coor)
             {
                 return zombie;

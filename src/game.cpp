@@ -77,7 +77,7 @@ void Game::init(std::string title, int width, int height)
     frame_delay_ = 1000.0f / FPS_;
 
     // 创建场景
-    current_scene_ = new SceneStart();
+    current_scene_ = std::make_shared<SceneStart>();
     current_scene_->init();
 }
 
@@ -120,7 +120,7 @@ void Game::clean()
     if (current_scene_)
     {
         current_scene_->clean();
-        delete current_scene_;
+        // delete current_scene_;
         current_scene_ = nullptr;
     }
 
@@ -160,12 +160,12 @@ void Game::moveMouse()
     setMousePos(glm::vec2(x, y));
 }
 
-void Game::changeScene(Scene* scene)
+void Game::changeScene(std::shared_ptr<Scene> scene)
 {
     if (current_scene_ != nullptr)
     {
         current_scene_->clean();
-        delete current_scene_;
+        // delete current_scene_;
         current_scene_ = nullptr;
     }
     current_scene_ = scene;

@@ -18,13 +18,13 @@ enum class ObjectType {
     NONE = -1,
 };
 
-class Object
+class Object : public std::enable_shared_from_this<Object>
 {
 protected:
     Game& game_ = Game::getInstance();
-    std::list<Object*> children_;
+    std::list<std::shared_ptr<Object>> children_;
     ObjectType o_type_ = ObjectType::NONE;
-    Object* parent_ = nullptr;
+    std::shared_ptr<Object> parent_ = nullptr;
     SDL_Texture* texture_ = nullptr;
     int width_ = 0;
     int height_ = 0;
@@ -41,8 +41,8 @@ public:
     virtual void render();
     virtual void clean();
 
-    Object* getParent() { return parent_; }
-    void setParent(Object* parent) { parent_ = parent; }
+    std::shared_ptr<Object> getParent() { return parent_; }
+    void setParent(std::shared_ptr<Object> parent) { parent_ = parent; }
 
     void setObjectType(ObjectType type) { o_type_ = type; }
     ObjectType getObjectType() { return o_type_; }
@@ -52,13 +52,13 @@ public:
     void setActive(bool active) { is_active_ = active; }
     bool getActive() const { return is_active_; }
 
-    std::list<Object*>& getChildren() { return children_; }
+    std::list<std::shared_ptr<Object>>& getChildren() { return children_; }
 
-    virtual void addChild(Object* child) {
+    virtual void addChild(std::shared_ptr<Object> child) {
         children_.push_back(child);
         sortChildren();
     }
-    virtual void removeChild(Object* child) {
+    virtual void removeChild(std::shared_ptr<Object> child) {
         children_.erase(std::remove(children_.begin(), children_.end(), child), children_.end());
     }
 

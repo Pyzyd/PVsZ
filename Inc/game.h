@@ -17,7 +17,7 @@ class Game
     glm::vec2 screen_size_ = glm::vec2(0.0f);
     glm::vec2 mouse_pos_ = glm::vec2(0.0f);
 
-    Scene* current_scene_ = nullptr; // 当前场景
+    std::shared_ptr<Scene> current_scene_ = nullptr; // 当前场景
 
     SDL_Window* window_ = nullptr;
     SDL_Renderer* renderer_ = nullptr;
@@ -52,7 +52,7 @@ public:
     void renderBackground(SDL_Texture* texture, int start_x, int start_y);
     void moveMouse();
 
-    void Game::changeScene(Scene *scene);
+    void Game::changeScene(std::shared_ptr<Scene> scene);
 
     float getRandomFloat(float min, float max) {
         std::uniform_real_distribution<float> dis(min, max);

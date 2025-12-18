@@ -17,7 +17,7 @@ class SunShine : public Object
     glm::vec2 direction_ = glm::vec2(0, 0);
     int width_ = 0;
     int height_ = 0;
-    SDL_Texture *texture_ = nullptr;
+    SDL_Texture* texture_ = nullptr;
     int frame_index_ = 0;
     int frame_count_ = 0;
     float frame_time_ = 0.0f;
@@ -26,11 +26,11 @@ class SunShine : public Object
     bool clicked_ = false;
     bool is_collected_ = false;
     bool has_sound_ = false;
-    Mix_Chunk *clicked_sound_ = nullptr;
+    Mix_Chunk* clicked_sound_ = nullptr;
 
 public:
     static int value;
-    static SunShine *addSunshineChild(Object *parent, glm::vec2 pos, glm::vec2 dest);
+    static std::shared_ptr<SunShine> addSunshineChild(std::shared_ptr<Object> parent, glm::vec2 pos, glm::vec2 dest);
 
     virtual void init() override;
     virtual void handleEvents(SDL_Event &event) override;
@@ -56,8 +56,8 @@ public:
         dest_ = dest;
         direction_ = glm::normalize(dest - pos_);
     }
-    SDL_Texture *getTexture() const { return texture_; }
-    void setTexture(SDL_Texture *texture) { texture_ = texture; }
+    SDL_Texture* getTexture() const { return texture_; }
+    void setTexture(SDL_Texture* texture) { texture_ = texture; }
     int getFrameIndex() const { return frame_index_; }
     void setFrameIndex(int frame_index) { frame_index_ = frame_index; }
     int getFrameCount() const { return frame_count_; }
