@@ -54,7 +54,7 @@ void SceneStart::clean()
     }
 }
 
-void SceneStart::renderMenu(SDL_Texture *menu, int x, int y)
+void SceneStart::renderMenu(SDL_Texture* menu, int x, int y)
 {
     SDL_Rect dstRect = {x, y, 0, 0};
     SDL_QueryTexture(menu, NULL, NULL, &dstRect.w, &dstRect.h);

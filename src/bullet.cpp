@@ -5,7 +5,7 @@
 std::map<PlantType, std::string> bullet_file_path;
 std::map<PlantType, std::string> bullet_explosion_file;
 
-Bullet *Bullet::addBulletChild(Object *parent, PlantType planttype, glm::vec2 pos,glm::vec2 dir, float speed)
+Bullet* Bullet::addBulletChild(Object* parent, PlantType planttype, glm::vec2 pos,glm::vec2 dir, float speed)
 {
     Bullet* bullet = new Bullet();
     bullet->setPlantType(planttype);

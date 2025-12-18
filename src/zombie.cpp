@@ -21,9 +21,9 @@ void initZombieFilePath()
     }
 }
 
-Zombie *Zombie::addZombieChild(Object *parent, glm::vec2 pos, glm::ivec2 coor, float speed)
+Zombie* Zombie::addZombieChild(Object* parent, glm::vec2 pos, glm::ivec2 coor, float speed)
 {
-    Zombie *zombie = new Zombie();
+    Zombie* zombie = new Zombie();
     zombie->setPos(pos);
     zombie->setCoor(coor);
     zombie->setSpeed(speed);

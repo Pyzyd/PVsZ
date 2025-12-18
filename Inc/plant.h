@@ -36,7 +36,7 @@ class Plant : public Actor
     bool is_hurt_ = false;
     bool is_dead_ = false;
 public:
-    static Plant *addPlantChild(Object *parent, PlantType type, glm::vec2 pos);
+    static Plant* addPlantChild(Object* parent, PlantType type, glm::vec2 pos);
 
     virtual void init() override;
     virtual void update(float dt) override;
@@ -53,7 +53,7 @@ public:
     bool isAttacking() const { return is_attacking_; }
     void setIsAttacking(bool is_attacking) { is_attacking_ = is_attacking; }
     PlantType getPlantType() const { return p_type_; }
-    SDL_Texture *getPlantTexture() const { return texture_; }
+    SDL_Texture* getPlantTexture() const { return texture_; }
     int getFrameCount() const { return frame_count_; }
     int getFrameIndex() const { return frame_index_; }
 
@@ -72,7 +72,7 @@ class Card : public Object
     
 
 public:
-    static Card *addCardChild(Object *parent, PlantType type, glm::vec2 pos);
+    static Card* addCardChild(Object* parent, PlantType type, glm::vec2 pos);
 
     virtual void init() override;
     virtual void update(float dt) override;

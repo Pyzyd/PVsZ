@@ -119,8 +119,8 @@ void SceneMain::renderSunShineNum()
 {
     auto text = std::to_string(total_sunshine_num_ * SunShine::value);
     SDL_Color color = {0, 0, 0, 255}; // 设置文本颜色为黑色
-    SDL_Surface *surface = TTF_RenderUTF8_Blended(font_, text.c_str(), color);
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(game_.getRenderer(), surface);
+    SDL_Surface* surface = TTF_RenderUTF8_Blended(font_, text.c_str(), color);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(game_.getRenderer(), surface);
     SDL_Rect rect = {SUNSHINE_NUM_TEXT_CENTER_X - surface->w / 2, SUNSHINE_NUM_TEXT_CENTER_Y - surface->h / 2, surface->w, surface->h};
     SDL_RenderCopy(game_.getRenderer(), texture, NULL, &rect);
     SDL_FreeSurface(surface);
@@ -134,7 +134,7 @@ void SceneMain::updatePlant()
     {
         if (child->getObjectType() == ObjectType::PLANT_BULLET)
         {
-            auto bullet = dynamic_cast<Bullet *>(child);
+            auto bullet = dynamic_cast<Bullet* >(child);
             if (bullet != nullptr)
             {
                 ZombieTakeDamage(bullet);
@@ -151,7 +151,7 @@ void SceneMain::updateZombie()
     {
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
-            auto zombie = dynamic_cast<Zombie *>(child);
+            auto zombie = dynamic_cast<Zombie* >(child);
             if (zombie != nullptr)
             {
                 if (zombie->getCoor().x >= 0 && zombie->getCoor().x <= PLANT_MAP_WIDTH &&
@@ -236,7 +236,7 @@ void SceneMain::setClickedCardPlant(int index)
         {
             if (child->getObjectType() == ObjectType::CARD)
             {
-                auto card = dynamic_cast<Card *>(child);
+                auto card = dynamic_cast<Card* >(child);
                 if (card->getBarIndex() == index)
                 {
                     clicked_card_plant_ = Plant::addPlantChild(this, card->getPlantType(), game_.getMousePos());
@@ -270,7 +270,7 @@ void SceneMain::countTotalSunShine()
     // {
     //     if (child->getObjectType() == ObjectType::SUNSHINE)
     //     {
-    //         auto sunshine = dynamic_cast<SunShine *>(child);
+    //         auto sunshine = dynamic_cast<SunShine* >(child);
     //         if (sunshine->isClicked() && !sunshine->isCollected()){
     //             sunshine->setClicked(false);
     //             total_sunshine_num_++;
@@ -332,7 +332,7 @@ void SceneMain::plantAttackZombie()
                 {
                     if (child->getObjectType() == ObjectType::ZOMBIE)
                     {
-                        auto zombie = dynamic_cast<Zombie *>(child);
+                        auto zombie = dynamic_cast<Zombie* >(child);
                         if (zombie->getCoor().x >= j && zombie->getCoor().y == i)
                         {
                             is_attacking = true;
@@ -363,13 +363,13 @@ void SceneMain::plantAttackZombie()
 //     }
 // }
 
-void SceneMain::ZombieTakeDamage(Bullet *bullet)
+void SceneMain::ZombieTakeDamage(Bullet* bullet)
 {
     for (auto &child : children_)
     {
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
-            auto zombie = dynamic_cast<Zombie *>(child);
+            auto zombie = dynamic_cast<Zombie* >(child);
             if (zombie->isAlive() && !(bullet->isExplosion()) && glm::length(zombie->getPos() - bullet->getPos()) < zombie->getWidth() * 0.4f)
             {
                 zombie->takeDamage(bullet->getDamage());
@@ -385,7 +385,7 @@ void SceneMain::ZombieEatPlant()
     {
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
-            auto zombie = dynamic_cast<Zombie *>(child);
+            auto zombie = dynamic_cast<Zombie*>(child);
             if (zombie->isAlive())
             {
                 auto plant = getPlantFromMapCoor(zombie->getCoor());
@@ -410,13 +410,13 @@ void SceneMain::ZombieEatPlant()
     }
 }
 
-Plant *SceneMain::getPlantFromMapCoor(glm::ivec2 map_coor)
+Plant* SceneMain::getPlantFromMapCoor(glm::ivec2 map_coor)
 {
     for (auto &child : children_)
     {
         if (child->getObjectType() == ObjectType::PLANT)
         {
-            auto plant = dynamic_cast<Plant *>(child);
+            auto plant = dynamic_cast<Plant*>(child);
             if (plant->getCoor() == map_coor)
             {
                 return plant;
@@ -426,13 +426,13 @@ Plant *SceneMain::getPlantFromMapCoor(glm::ivec2 map_coor)
     return nullptr;
 }
 
-Zombie *SceneMain::getZombieFromMapCoor(glm::ivec2 map_coor)
+Zombie* SceneMain::getZombieFromMapCoor(glm::ivec2 map_coor)
 {
     for (auto &child : children_)
     {
         if (child->getObjectType() == ObjectType::ZOMBIE)
         {
-            auto zombie = dynamic_cast<Zombie *>(child);
+            auto zombie = dynamic_cast<Zombie*>(child);
             if (zombie->getCoor() == map_coor)
             {
                 return zombie;

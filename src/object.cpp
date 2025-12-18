@@ -62,7 +62,7 @@ void Object::clean()
 
 void Object::sortChildren()
 {
-    children_.sort([](Object *a, Object *b){ return a->getObjectType() < b->getObjectType(); });
+    children_.sort([](Object* a, Object* b){ return a->getObjectType() < b->getObjectType(); });
 }
 
 bool fileExists(std::string path)

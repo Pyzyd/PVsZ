@@ -140,7 +140,7 @@ void Game::clean()
     SDL_Quit();
 }
 
-void Game::renderBackground(SDL_Texture *texture, int start_x, int start_y)
+void Game::renderBackground(SDL_Texture* texture, int start_x, int start_y)
 {
     if (texture)
     {
@@ -160,7 +160,7 @@ void Game::moveMouse()
     setMousePos(glm::vec2(x, y));
 }
 
-void Game::changeScene(Scene *scene)
+void Game::changeScene(Scene* scene)
 {
     if (current_scene_ != nullptr)
     {

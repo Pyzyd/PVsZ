@@ -6,9 +6,9 @@ std::vector<std::string> sunshine_file_path;
 
 int SunShine::value = 25;
 
-SunShine *SunShine::addSunshineChild(Object *parent, glm::vec2 pos, glm::vec2 dest)
+SunShine* SunShine::addSunshineChild(Object* parent, glm::vec2 pos, glm::vec2 dest)
 {
-    SunShine *sunshine = new SunShine();
+    SunShine* sunshine = new SunShine();
     sunshine->setPos(pos);
     sunshine->setDest(dest);
     sunshine->init();
@@ -49,7 +49,7 @@ void SunShine::update(float dt)
     {
         pos_ = dest_;
         speed_ = 0.0;
-        if (dest_ == dynamic_cast<SceneMain *>(parent_)->getSunshineCollectorPos())
+        if (dest_ == dynamic_cast<SceneMain*>(parent_)->getSunshineCollectorPos())
         {
             is_collected_ = true;
         }
@@ -109,7 +109,7 @@ void SunShine::clicked(SDL_Event &event)
             setDest(glm::vec2((TOP_BAR_START_X + TOP_BAR_CARD_START_X) / 2.0f, TOP_BAR_CARD_HEIGHT / 2.0f));
             // 播放音效
             if (!has_sound_){
-                auto parent = dynamic_cast<SceneMain *>(this->parent_);
+                auto parent = dynamic_cast<SceneMain*>(this->parent_);
                 parent->countTotalSunShine();
                 Mix_PlayChannel(-1, clicked_sound_, 0);
                 has_sound_ = true;
