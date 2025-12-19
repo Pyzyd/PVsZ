@@ -177,6 +177,6 @@ void Game::changeScene(std::shared_ptr<Scene> scene)
         current_scene_ = nullptr;
     }
     current_scene_ = std::move(scene);
-    printf("%d\n", current_scene_.use_count());
+    // printf("%d\n", current_scene_.use_count());
     current_scene_->init();
 }

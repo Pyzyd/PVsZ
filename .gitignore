@@ -1,4 +1,4 @@
-res/
+# res/
 build/
 bin/
 vcpkg_installed/
